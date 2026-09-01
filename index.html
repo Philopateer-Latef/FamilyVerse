@@ -1,0 +1,3493 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FamilyVerse</title>
+
+<style>
+:root{
+ --bg:#080b14;
+ --card:#111827;
+ --text:#f8fafc;
+ --muted:#94a3b8;
+ --p:#8b5cf6;
+ --c:#06b6d4;
+ --b:rgba(255,255,255,.08);
+ --gold:#fbbf24;
+ --ruby:#f43f5e;
+}
+*{box-sizing:border-box}
+body{
+ margin:0;
+ background:
+ radial-gradient(circle at 15% 10%,#7c3aed22,transparent 30%),
+ radial-gradient(circle at 85% 20%,#06b6d41c,transparent 30%),
+ var(--bg);
+ color:var(--text);
+ font-family:Tahoma,Arial,sans-serif
+}
+button,input,textarea{font:inherit}
+button{border:0;cursor:pointer}
+.hidden{display:none!important}
+
+.login{
+ min-height:100vh;
+ display:grid;
+ place-items:center;
+ padding:20px
+}
+.loginbox{
+ max-width:500px;
+ width:100%;
+ text-align:center;
+ background:linear-gradient(145deg,#111827,#0f172a);
+ border:1px solid var(--b);
+ padding:35px;
+ border-radius:25px;
+ box-shadow:0 25px 80px #0008
+}
+.logo{
+ font-size:35px;
+ font-weight:900;
+ background:linear-gradient(90deg,#a78bfa,#22d3ee);
+ -webkit-background-clip:text;
+ color:transparent
+}
+.loginbox p{color:var(--muted);line-height:1.8}
+
+.auth-tabs{
+ display:flex;
+ gap:8px;
+ margin:20px 0
+}
+.auth-tabs button{
+ flex:1;
+ padding:12px;
+ border-radius:12px;
+ background:#172033;
+ color:#cbd5e1
+}
+.auth-tabs button.active{
+ background:linear-gradient(135deg,#7c3aed,#0891b2);
+ color:white
+}
+.auth-form input{
+ width:100%;
+ padding:13px;
+ background:#0b1220;
+ color:#fff;
+ border:1px solid var(--b);
+ border-radius:12px;
+ margin:7px 0
+}
+.primary{
+ padding:12px 18px;
+ border-radius:12px;
+ color:white;
+ background:linear-gradient(135deg,#7c3aed,#0891b2);
+ font-weight:800
+}
+.full{width:100%;margin-top:10px}
+.secondary{background:#202b3f!important}
+
+.app{display:flex;min-height:100vh}
+
+.side{
+ width:245px;
+ position:fixed;
+ right:0;
+ top:0;
+ bottom:0;
+ background:#0b101cdd;
+ border-left:1px solid var(--b);
+ padding:22px;
+ z-index:5;
+ backdrop-filter:blur(15px)
+}
+.side .logo{font-size:24px;margin-bottom:25px}
+
+.nav{display:grid;gap:7px}
+.nav button{
+ padding:12px;
+ background:transparent;
+ color:#cbd5e1;
+ text-align:right;
+ border-radius:12px
+}
+.nav button:hover,.nav button.active{
+ background:#8b5cf622;
+ color:#fff
+}
+
+.me{
+ position:absolute;
+ bottom:18px;
+ left:15px;
+ right:15px;
+ padding:10px;
+ border-radius:14px;
+ background:var(--card);
+ display:flex;
+ gap:10px;
+ align-items:center
+}
+
+.avatar{
+ width:44px;
+ height:44px;
+ border-radius:50%;
+ display:grid;
+ place-items:center;
+ background:linear-gradient(135deg,var(--p),var(--c));
+ font-weight:900;
+ overflow:hidden;
+ flex-shrink:0
+}
+
+.main{
+ margin-right:245px;
+ padding:25px;
+ width:calc(100% - 245px);
+ max-width:1450px
+}
+
+.top{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ margin-bottom:22px
+}
+.online{color:#86efac;font-size:13px}
+
+.page{display:none}
+.page.active{display:block}
+
+.card{
+ background:linear-gradient(145deg,#111827f5,#0f172ae8);
+ border:1px solid var(--b);
+ border-radius:20px;
+ padding:20px;
+ box-shadow:0 15px 45px #0004
+}
+
+.hero{
+ display:grid;
+ grid-template-columns:1.4fr .7fr;
+ gap:18px
+}
+.hero-main{
+ padding:35px;
+ min-height:260px;
+ background:linear-gradient(135deg,#7c3aed44,#06b6d422),var(--card)
+}
+.hero-main h2{font-size:34px;margin:8px 0}
+
+h1,h2,h3{margin-top:0}
+
+.muted{
+ color:var(--muted);
+ font-size:13px;
+ line-height:1.7
+}
+
+.stats{
+ display:grid;
+ grid-template-columns:repeat(4,1fr);
+ gap:12px
+}
+.stat{
+ padding:15px;
+ background:#ffffff05;
+ border:1px solid var(--b);
+ border-radius:14px
+}
+.stat b{
+ font-size:23px;
+ display:block;
+ margin-top:6px
+}
+
+.grid{display:grid;gap:15px}
+.members{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.member{display:flex;gap:12px;align-items:center}
+
+.section{margin:25px 0 12px}
+.actions{display:flex;gap:10px;flex-wrap:wrap}
+
+.chat{
+ height:580px;
+ display:flex;
+ flex-direction:column
+}
+.messages{
+ flex:1;
+ overflow:auto;
+ padding:10px
+}
+.msg{
+ max-width:75%;
+ background:#202b3f;
+ border-radius:16px;
+ padding:10px 13px;
+ margin:8px 0
+}
+.msg.me{
+ margin-right:auto;
+ background:linear-gradient(135deg,#5b21b6,#155e75)
+}
+.msg small{color:#94a3b8}
+
+.form{display:flex;gap:8px}
+.form input{flex:1}
+
+.input{
+ background:#0b1220;
+ color:#fff;
+ border:1px solid var(--b);
+ padding:12px;
+ border-radius:12px;
+ width:100%
+}
+
+.roomtabs{
+ display:flex;
+ gap:8px;
+ overflow:auto;
+ margin-bottom:12px
+}
+.roomtabs button{
+ white-space:nowrap;
+ background:#172033;
+ color:#cbd5e1;
+ padding:9px 13px;
+ border-radius:11px
+}
+.roomtabs button.active{
+ background:#7c3aed;
+ color:white
+}
+
+.people{
+ display:grid;
+ grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+ gap:12px
+}
+.person{
+ padding:15px;
+ background:#ffffff04;
+ border:1px solid var(--b);
+ border-radius:16px
+}
+
+.profile{
+ display:grid;
+ grid-template-columns:300px 1fr;
+ gap:18px
+}
+.profile-main{text-align:center}
+
+.profile-main .avatar{
+ width:120px;
+ height:120px;
+ font-size:55px;
+ margin:auto;
+ border:4px solid #ffffff22
+}
+
+.profile-avatar{
+ position:relative;
+ width:max-content;
+ margin:auto
+}
+
+.frame-purple{
+ box-shadow:0 0 0 5px #8b5cf6,0 0 25px #8b5cf6
+}
+.frame-gold{
+ box-shadow:0 0 0 5px #fbbf24,0 0 25px #fbbf24
+}
+.frame-ruby{
+ box-shadow:0 0 0 5px #f43f5e,0 0 25px #f43f5e
+}
+.frame-cyan{
+ box-shadow:0 0 0 5px #06b6d4,0 0 25px #06b6d4
+}
+
+.badge{
+ display:inline-block;
+ background:#241d3d;
+ border:1px solid #4c1d95;
+ padding:8px 10px;
+ border-radius:10px;
+ margin:4px;
+ font-size:12px
+}
+
+.currency-box{
+ display:flex;
+ gap:10px;
+ flex-wrap:wrap;
+ margin:15px 0
+}
+
+.currency{
+ flex:1;
+ min-width:150px;
+ padding:15px;
+ border-radius:16px;
+ background:#ffffff05;
+ border:1px solid var(--b)
+}
+.currency b{
+ display:block;
+ font-size:25px;
+ margin-top:6px
+}
+.gold{color:var(--gold)}
+.ruby{color:#fb7185}
+
+.shop-grid{
+ display:grid;
+ grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+ gap:15px
+}
+.shop-item{
+ padding:18px;
+ background:#ffffff05;
+ border:1px solid var(--b);
+ border-radius:17px;
+ text-align:center
+}
+.shop-icon{
+ font-size:45px;
+ margin:10px
+}
+.price{
+ margin:10px 0;
+ font-weight:900
+}
+
+.avatar-grid{
+ display:grid;
+ grid-template-columns:repeat(auto-fit,minmax(75px,1fr));
+ gap:10px;
+ margin:12px 0
+}
+.avatar-option{
+ padding:12px;
+ font-size:30px;
+ background:#172033;
+ border-radius:12px;
+ cursor:pointer
+}
+.avatar-option:hover{
+ background:#312e81
+}
+
+.game-grid{
+ display:grid;
+ grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+ gap:15px
+}
+.game-card{
+ padding:25px;
+ text-align:center;
+ border-radius:20px;
+ background:linear-gradient(145deg,#171f34,#101827);
+ border:1px solid var(--b)
+}
+.game-card .game-icon{
+ font-size:55px
+}
+
+.xo-board{
+ display:grid;
+ grid-template-columns:repeat(3,90px);
+ gap:8px;
+ justify-content:center;
+ margin:20px auto
+}
+.xo-cell{
+ width:90px;
+ height:90px;
+ font-size:40px;
+ border-radius:14px;
+ background:#202b3f;
+ color:white
+}
+.xo-cell:hover{background:#303c55}
+
+.chess-board{
+ width:min(560px,90vw);
+ aspect-ratio:1;
+ margin:20px auto;
+ display:grid;
+ grid-template-columns:repeat(8,1fr);
+ border:5px solid #252b38;
+ border-radius:10px;
+ overflow:hidden
+}
+.chess-cell{
+ display:grid;
+ place-items:center;
+ font-size:clamp(20px,5vw,45px);
+ cursor:pointer;
+ user-select:none
+}
+.chess-light{background:#f0d9b5;color:#111}
+.chess-dark{background:#b58863;color:#111}
+.chess-selected{
+ outline:4px solid #22d3ee;
+ outline-offset:-4px
+}
+
+.modal{
+ position:fixed;
+ inset:0;
+ background:#0009;
+ display:grid;
+ place-items:center;
+ z-index:50;
+ padding:20px
+}
+.modal-box{
+ width:min(600px,100%);
+ max-height:90vh;
+ overflow:auto;
+ background:#111827;
+ border:1px solid var(--b);
+ border-radius:22px;
+ padding:25px
+}
+
+.toast{
+ position:fixed;
+ left:20px;
+ bottom:20px;
+ background:#111827;
+ border:1px solid var(--b);
+ padding:13px 17px;
+ border-radius:12px;
+ display:none;
+ z-index:100
+}
+.toast.show{display:block}
+
+textarea.input{
+ min-height:100px;
+ resize:vertical
+}
+
+.reward-card{
+ background:linear-gradient(135deg,#7c3aed22,#0891b222);
+ border:1px solid #8b5cf633
+}
+
+@media(max-width:850px){
+ .side{
+  width:72px;
+  padding:10px
+ }
+ .side .logo{font-size:0}
+ .side .logo:after{
+  content:"FV";
+  font-size:20px
+ }
+ .nav button{
+  font-size:0;
+  text-align:center
+ }
+ .nav button:first-letter{font-size:20px}
+ .me{
+  left:8px;
+  right:8px
+ }
+ .me>div:not(.avatar){display:none}
+ .main{
+  margin-right:72px;
+  width:calc(100% - 72px);
+  padding:14px
+ }
+ .hero,.profile{grid-template-columns:1fr}
+ .stats{grid-template-columns:repeat(2,1fr)}
+}
+
+@media(max-width:500px){
+ .xo-board{
+  grid-template-columns:repeat(3,70px)
+ }
+ .xo-cell{
+  width:70px;
+  height:70px
+ }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ================= LOGIN ================= -->
+
+<div id="login" class="login">
+ <div class="loginbox">
+
+  <div class="logo">FamilyVerse ✦</div>
+
+  <h2 id="authTitle">تسجيل الدخول</h2>
+
+  <p>
+   ادخل إلى عالم العيلة الخاص بك 🌌
+  </p>
+
+  <div class="auth-tabs">
+   <button id="loginTab" class="active" onclick="showLogin()">
+    تسجيل الدخول
+   </button>
+
+   <button id="registerTab" onclick="showRegister()">
+    إنشاء حساب
+   </button>
+  </div>
+
+  <div id="loginForm" class="auth-form">
+
+   <input
+    id="loginName"
+    maxlength="30"
+    placeholder="👤 اسم المستخدم"
+    autocomplete="username"
+   >
+
+   <input
+    id="loginPassword"
+    type="password"
+    placeholder="🔑 كلمة المرور"
+    autocomplete="current-password"
+   >
+
+   <button class="primary full" onclick="loginUser()">
+    🚀 تسجيل الدخول
+   </button>
+
+  </div>
+
+  <div id="registerForm" class="auth-form hidden">
+
+   <input
+    id="registerName"
+    maxlength="30"
+    placeholder="👤 اسم المستخدم"
+    autocomplete="username"
+   >
+
+   <input
+    id="registerPassword"
+    type="password"
+    placeholder="🔑 كلمة المرور"
+    autocomplete="new-password"
+   >
+
+   <input
+    id="registerPassword2"
+    type="password"
+    placeholder="🔑 تأكيد كلمة المرور"
+    autocomplete="new-password"
+   >
+
+   <button class="primary full" onclick="registerUser()">
+    ✨ إنشاء الحساب
+   </button>
+
+  </div>
+
+  <p id="configNote" class="muted">
+   FamilyVerse يستخدم Firebase لتأمين الحسابات وحفظ البيانات.
+  </p>
+
+ </div>
+</div>
+
+
+<!-- ================= APP ================= -->
+
+<div id="app" class="app hidden">
+
+<aside class="side">
+
+ <div class="logo">FamilyVerse ✦</div>
+
+ <nav class="nav">
+
+  <button class="active" onclick="page('home')">
+   🏠 الرئيسية
+  </button>
+
+  <button onclick="page('challenges')">
+   🎮 التحديات
+  </button>
+
+  <button onclick="page('games')">
+   🕹️ الألعاب
+  </button>
+
+  <button onclick="page('shop')">
+   🛒 المتجر
+  </button>
+
+  <button onclick="page('familychat')">
+   💬 الشات الجماعي
+  </button>
+
+  <button onclick="page('private')">
+   🔒 الرسائل الخاصة
+  </button>
+
+  <button onclick="page('members')">
+   👥 أفراد العيلة
+  </button>
+
+  <button onclick="page('profile')">
+   👤 البروفايل
+  </button>
+
+  <button onclick="logout()">
+   🚪 تسجيل الخروج
+  </button>
+
+ </nav>
+
+ <div class="me">
+
+  <div id="meAvatar" class="avatar">?</div>
+
+  <div>
+   <b id="meName">...</b>
+   <br>
+   <small id="meXP" class="muted">0 XP</small>
+  </div>
+
+ </div>
+
+</aside>
+
+
+<main class="main">
+
+<div class="top">
+ <h1 id="title">عالم العيلة 🏠</h1>
+ <span class="online">● FamilyVerse</span>
+</div>
+
+
+<!-- HOME -->
+
+<section id="home" class="page active">
+
+ <div class="hero">
+
+  <div class="card hero-main">
+
+   <span class="muted">مرحباً بك في</span>
+
+   <h2>FamilyVerse 🌌</h2>
+
+   <p class="muted">
+    مكان خاص بالعيلة للعب والتحديات والشات والذكريات.
+   </p>
+
+   <div class="actions">
+
+    <button class="primary"
+     onclick="page('familychat')">
+     💬 ادخل الشات
+    </button>
+
+    <button class="primary secondary"
+     onclick="page('games')">
+     🎮 الألعاب
+    </button>
+
+   </div>
+
+  </div>
+
+
+  <div class="card">
+
+   <h3>👤 حسابك</h3>
+
+   <div class="currency-box">
+
+    <div class="currency">
+     🪙 الذهب
+     <b id="homeGold" class="gold">0</b>
+    </div>
+
+    <div class="currency">
+     💎 الياقوت
+     <b id="homeRuby" class="ruby">0</b>
+    </div>
+
+   </div>
+
+   <div class="stats"
+        style="grid-template-columns:1fr 1fr">
+
+    <div class="stat">
+     <span class="muted">XP</span>
+     <b id="homeXP">0</b>
+    </div>
+
+    <div class="stat">
+     <span class="muted">Level</span>
+     <b id="homeLevel">1</b>
+    </div>
+
+   </div>
+
+  </div>
+
+ </div>
+
+
+ <div class="section">
+  <h2>🎁 مكافأة النشاط</h2>
+ </div>
+
+ <div class="card reward-card">
+
+  <h3>⏰ مكافأة كل ساعة</h3>
+
+  <p class="muted">
+   افتح FamilyVerse واستمر في استخدام الموقع لتحصل على مكافأة النشاط.
+  </p>
+
+  <div class="currency-box">
+
+   <div class="currency">
+    🪙
+    <b>+1000</b>
+   </div>
+
+   <div class="currency">
+    💎
+    <b>+50</b>
+   </div>
+
+  </div>
+
+  <button class="primary" onclick="claimHourlyReward()">
+   🎁 استلام المكافأة
+  </button>
+
+  <p id="rewardTimer" class="muted"></p>
+
+ </div>
+
+
+ <div class="section">
+  <h2>👥 أفراد العيلة</h2>
+ </div>
+
+ <div id="homeMembers"
+      class="grid members"></div>
+
+</section>
+
+
+<!-- MEMBERS -->
+
+<section id="members" class="page">
+
+ <div class="card">
+
+  <h2>👥 أفراد العيلة</h2>
+
+  <p class="muted">
+   اختار شخصاً لفتح محادثة خاصة معه.
+  </p>
+
+  <div id="membersList"
+       class="people"></div>
+
+ </div>
+
+</section>
+
+
+<!-- PRIVATE -->
+
+<section id="private" class="page">
+
+ <div class="card">
+
+  <h2>🔒 الرسائل الخاصة</h2>
+
+  <p class="muted">
+   اختار فرداً من العيلة لبدء محادثة خاصة.
+  </p>
+
+  <div id="privatePeople"
+       class="people"></div>
+
+  <div id="privateChat"
+       class="hidden chat"
+       style="margin-top:15px">
+
+   <h3 id="privateTitle"></h3>
+
+   <div id="privateMessages"
+        class="messages"></div>
+
+   <div class="form">
+
+    <input
+     id="privateInput"
+     class="input"
+     placeholder="اكتب رسالة خاصة..."
+     onkeydown="if(event.key==='Enter')sendPrivate()"
+    >
+
+    <button class="primary"
+            onclick="sendPrivate()">
+     إرسال
+    </button>
+
+   </div>
+
+  </div>
+
+ </div>
+
+</section>
+
+
+<!-- GROUP CHAT -->
+
+<section id="familychat" class="page">
+
+ <div class="card chat">
+
+  <h2>💬 الشات الجماعي</h2>
+
+  <div class="roomtabs">
+
+   <button class="active"
+           onclick="setRoom('general',this)">
+    🏠 العام
+   </button>
+
+   <button onclick="setRoom('gaming',this)">
+    🎮 Gaming
+   </button>
+
+   <button onclick="setRoom('study',this)">
+    📚 الدراسة
+   </button>
+
+   <button onclick="setRoom('football',this)">
+    ⚽ الكورة
+   </button>
+
+   <button onclick="setRoom('challenges',this)">
+    🔥 التحديات
+   </button>
+
+  </div>
+
+  <div id="groupMessages"
+       class="messages"></div>
+
+  <div class="form">
+
+   <input
+    id="groupInput"
+    class="input"
+    placeholder="اكتب للعيلة..."
+    onkeydown="if(event.key==='Enter')sendGroup()"
+   >
+
+   <button class="primary"
+           onclick="sendGroup()">
+    إرسال
+   </button>
+
+  </div>
+
+ </div>
+
+</section>
+
+
+<!-- PROFILE -->
+
+<section id="profile" class="page">
+
+ <div class="profile">
+
+  <div class="card profile-main">
+
+   <div class="profile-avatar">
+
+    <div id="profileAvatar"
+         class="avatar">
+     ?
+    </div>
+
+   </div>
+
+   <h2 id="profileName">...</h2>
+
+   <p class="muted"
+      id="profileBio">
+      أهلاً بك في FamilyVerse!
+   </p>
+
+   <p>
+    ⭐ Level
+    <b id="profileLevel">1</b>
+   </p>
+
+   <div>
+
+    <span class="badge">
+     🏆 أول فوز
+    </span>
+
+    <span class="badge">
+     🔥 Streak
+    </span>
+
+    <span class="badge">
+     🧩 ألغاز
+    </span>
+
+   </div>
+
+   <button class="primary full"
+           onclick="openProfileEditor()">
+    ⚙️ تعديل البروفايل
+   </button>
+
+  </div>
+
+
+  <div>
+
+   <div class="card">
+
+    <h2>💰 محفظتك</h2>
+
+    <div class="currency-box">
+
+     <div class="currency">
+      🪙 الذهب
+      <b id="profileGold" class="gold">0</b>
+     </div>
+
+     <div class="currency">
+      💎 الياقوت
+      <b id="profileRuby" class="ruby">0</b>
+     </div>
+
+    </div>
+
+    <button class="primary"
+            onclick="openExchange()">
+     🔄 تحويل العملات
+    </button>
+
+    <button class="primary secondary"
+            onclick="page('shop')">
+     🛒 افتح المتجر
+    </button>
+
+   </div>
+
+   <div class="card" style="margin-top:18px">
+
+    <h2>📊 إحصائياتك</h2>
+
+    <div class="stats">
+
+     <div class="stat">
+      <span class="muted">XP</span>
+      <b id="profileXP">0</b>
+     </div>
+
+     <div class="stat">
+      <span class="muted">Wins</span>
+      <b id="wins">0</b>
+     </div>
+
+     <div class="stat">
+      <span class="muted">Puzzles</span>
+      <b id="puzzles">0</b>
+     </div>
+
+     <div class="stat">
+      <span class="muted">Streak</span>
+      <b id="streak">0 🔥</b>
+     </div>
+
+    </div>
+
+   </div>
+
+  </div>
+
+ </div>
+
+</section>
+
+
+<!-- CHALLENGES -->
+
+<section id="challenges" class="page">
+
+ <div class="card">
+
+  <h2>🎮 التحديات</h2>
+
+  <p class="muted">
+   العب واحصل على XP.
+  </p>
+
+  <div class="actions">
+
+   <button class="primary"
+           onclick="addXP(50)">
+    🧩 Scramble +50 XP
+   </button>
+
+   <button class="primary"
+           onclick="addXP(40)">
+    🧠 Quiz +40 XP
+   </button>
+
+   <button class="primary"
+           onclick="addXP(70)">
+    ⚡ Speed +70 XP
+   </button>
+
+  </div>
+
+ </div>
+
+</section>
+
+
+<!-- GAMES -->
+
+<section id="games" class="page">
+
+ <div class="card">
+
+  <h2>🕹️ الألعاب</h2>
+
+  <p class="muted">
+   العب مع أفراد العيلة واكسب XP ومكافآت ثابتة.
+  </p>
+
+  <div class="game-grid">
+
+   <div class="game-card">
+
+    <div class="game-icon">❌⭕</div>
+
+    <h3>XO</h3>
+
+    <p class="muted">
+     لعبة XO لشخصين على نفس الجهاز.
+    </p>
+
+    <button class="primary"
+            onclick="openXO()">
+     لعب الآن
+    </button>
+
+   </div>
+
+   <div class="game-card">
+
+    <div class="game-icon">♟️</div>
+
+    <h3>الشطرنج</h3>
+
+    <p class="muted">
+     مباراة شطرنج محلية بين لاعبين.
+    </p>
+
+    <button class="primary"
+            onclick="openChess()">
+     لعب الآن
+    </button>
+
+   </div>
+
+  </div>
+
+ </div>
+
+</section>
+
+
+<!-- SHOP -->
+
+<section id="shop" class="page">
+
+ <div class="card">
+
+  <h2>🛒 متجر FamilyVerse</h2>
+
+  <p class="muted">
+   اشترِ عناصر تجميلية لملفك الشخصي باستخدام العملات الافتراضية.
+  </p>
+
+  <div class="currency-box">
+
+   <div class="currency">
+    🪙
+    <b id="shopGold">0</b>
+   </div>
+
+   <div class="currency">
+    💎
+    <b id="shopRuby">0</b>
+   </div>
+
+  </div>
+
+  <div id="shopGrid" class="shop-grid"></div>
+
+ </div>
+
+</section>
+
+</main>
+</div>
+
+
+<!-- PROFILE MODAL -->
+
+<div id="profileModal" class="modal hidden">
+
+ <div class="modal-box">
+
+  <h2>⚙️ تعديل البروفايل</h2>
+
+  <input
+   id="editName"
+   class="input"
+   placeholder="اسمك"
+  >
+
+  <br><br>
+
+  <textarea
+   id="editBio"
+   class="input"
+   maxlength="120"
+   placeholder="اكتب نبذة عن نفسك..."
+  ></textarea>
+
+  <h3>🖼️ اختر صورتك</h3>
+
+  <div id="avatarGrid" class="avatar-grid"></div>
+
+  <h3>🎨 الإطار</h3>
+
+  <div class="actions">
+
+   <button class="primary secondary"
+           onclick="selectFrame('none')">
+    عادي
+   </button>
+
+   <button class="primary"
+           onclick="selectFrame('purple')">
+    💜 بنفسجي
+   </button>
+
+   <button class="primary"
+           onclick="selectFrame('gold')">
+    🟡 ذهبي
+   </button>
+
+   <button class="primary"
+           onclick="selectFrame('ruby')">
+    🔴 ياقوتي
+   </button>
+
+   <button class="primary"
+           onclick="selectFrame('cyan')">
+    🔵 سماوي
+   </button>
+
+  </div>
+
+  <div class="actions" style="margin-top:20px">
+
+   <button class="primary"
+           onclick="saveProfile()">
+    💾 حفظ
+   </button>
+
+   <button class="primary secondary"
+           onclick="closeModal('profileModal')">
+    إلغاء
+   </button>
+
+  </div>
+
+ </div>
+
+</div>
+
+
+<!-- EXCHANGE MODAL -->
+
+<div id="exchangeModal" class="modal hidden">
+
+ <div class="modal-box">
+
+  <h2>🔄 تحويل العملات</h2>
+
+  <p>
+   <b>1 💎 ياقوت = 100 🪙 ذهب</b>
+  </p>
+
+  <input
+   id="exchangeAmount"
+   class="input"
+   type="number"
+   min="1"
+   placeholder="عدد الوحدات"
+  >
+
+  <div class="actions" style="margin-top:15px">
+
+   <button class="primary"
+           onclick="exchangeGoldToRuby()">
+    🪙 ➜ 💎
+   </button>
+
+   <button class="primary"
+           onclick="exchangeRubyToGold()">
+    💎 ➜ 🪙
+   </button>
+
+   <button class="primary secondary"
+           onclick="closeModal('exchangeModal')">
+    إغلاق
+   </button>
+
+  </div>
+
+ </div>
+
+</div>
+
+
+<!-- XO MODAL -->
+
+<div id="xoModal" class="modal hidden">
+
+ <div class="modal-box">
+
+  <h2>❌⭕ XO</h2>
+
+  <p id="xoStatus" style="text-align:center">
+   الدور: X
+  </p>
+
+  <div id="xoBoard" class="xo-board"></div>
+
+  <div style="text-align:center">
+
+   <button class="primary"
+           onclick="resetXO()">
+    🔄 إعادة اللعب
+   </button>
+
+   <button class="primary secondary"
+           onclick="closeModal('xoModal')">
+    خروج
+   </button>
+
+  </div>
+
+ </div>
+
+</div>
+
+
+<!-- CHESS MODAL -->
+
+<div id="chessModal" class="modal hidden">
+
+ <div class="modal-box">
+
+  <h2>♟️ الشطرنج</h2>
+
+  <p id="chessStatus" style="text-align:center">
+   دور الأبيض
+  </p>
+
+  <div id="chessBoard" class="chess-board"></div>
+
+  <p class="muted">
+   هذه نسخة محلية للعب لاعبين على نفس الجهاز.
+  </p>
+
+  <div style="text-align:center">
+
+   <button class="primary"
+           onclick="resetChess()">
+    🔄 إعادة اللعب
+   </button>
+
+   <button class="primary secondary"
+           onclick="closeModal('chessModal')">
+    خروج
+   </button>
+
+  </div>
+
+ </div>
+
+</div>
+
+
+<div id="toast" class="toast"></div>
+
+
+<script type="module">
+
+import {
+ initializeApp
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+
+import {
+ getAuth,
+ createUserWithEmailAndPassword,
+ signInWithEmailAndPassword,
+ onAuthStateChanged,
+ signOut
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+import {
+ getFirestore,
+ doc,
+ setDoc,
+ getDoc,
+ collection,
+ addDoc,
+ query,
+ where,
+ orderBy,
+ onSnapshot,
+ serverTimestamp,
+ limit
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+
+/* ================= FIREBASE ================= */
+
+const firebaseConfig = {
+
+ apiKey:
+ "AIzaSyD16uVyQo44733AykP6pc0j-Cys3EJ1-tc",
+
+ authDomain:
+ "familyverse-ae956.firebaseapp.com",
+
+ projectId:
+ "familyverse-ae956",
+
+ storageBucket:
+ "familyverse-ae956.firebasestorage.app",
+
+ messagingSenderId:
+ "149212761868",
+
+ appId:
+ "1:149212761868:web:a9365dad907d125627c329",
+
+ measurementId:
+ "G-Z2Y958JQ0S"
+
+};
+
+
+const app = initializeApp(firebaseConfig);
+
+const auth = getAuth(app);
+
+const db = getFirestore(app);
+
+
+/* ================= VARIABLES ================= */
+
+let currentUser = null;
+let currentProfile = null;
+
+let privateUid = null;
+let currentRoom = "general";
+
+let unsubs = [];
+
+let selectedAvatar = "😀";
+let selectedFrame = "none";
+
+let rewardInterval = null;
+
+
+/* ================= HELPERS ================= */
+
+const $ = id => document.getElementById(id);
+
+
+function toast(text){
+
+ const el = $("toast");
+
+ el.textContent = text;
+
+ el.classList.add("show");
+
+ setTimeout(()=>{
+  el.classList.remove("show");
+ },2500);
+
+}
+
+
+function makeEmail(name){
+
+ return name
+  .trim()
+  .toLowerCase()
+  .replace(/\s+/g,"")
+  .replace(/[^a-z0-9\u0600-\u06ff_]/g,"")
+  + "@familyverse.local";
+
+}
+
+
+function escapeHTML(s){
+
+ return (s || "").replace(
+  /[&<>"']/g,
+  m => ({
+   "&":"&amp;",
+   "<":"&lt;",
+   ">":"&gt;",
+   '"':"&quot;",
+   "'":"&#039;"
+  }[m])
+ );
+
+}
+
+
+function getGold(){
+
+ return Number(currentProfile?.gold || 0);
+
+}
+
+
+function getRuby(){
+
+ return Number(currentProfile?.ruby || 0);
+
+}
+
+
+function updateCurrencyUI(){
+
+ const gold = getGold();
+ const ruby = getRuby();
+
+ $("homeGold").textContent = gold;
+ $("homeRuby").textContent = ruby;
+
+ $("profileGold").textContent = gold;
+ $("profileRuby").textContent = ruby;
+
+ $("shopGold").textContent = gold;
+ $("shopRuby").textContent = ruby;
+
+}
+
+
+/* ================= AUTH UI ================= */
+
+window.showLogin = function(){
+
+ $("loginForm").classList.remove("hidden");
+
+ $("registerForm").classList.add("hidden");
+
+ $("loginTab").classList.add("active");
+
+ $("registerTab").classList.remove("active");
+
+ $("authTitle").textContent = "تسجيل الدخول";
+
+};
+
+
+window.showRegister = function(){
+
+ $("loginForm").classList.add("hidden");
+
+ $("registerForm").classList.remove("hidden");
+
+ $("loginTab").classList.remove("active");
+
+ $("registerTab").classList.add("active");
+
+ $("authTitle").textContent = "إنشاء حساب جديد";
+
+};
+
+
+/* ================= REGISTER ================= */
+
+window.registerUser = async function(){
+
+ const name =
+  $("registerName").value.trim();
+
+ const password =
+  $("registerPassword").value;
+
+ const password2 =
+  $("registerPassword2").value;
+
+
+ if(name.length < 3)
+  return toast("اسم المستخدم يجب أن يكون 3 أحرف على الأقل");
+
+ if(password.length < 6)
+  return toast("كلمة المرور يجب أن تكون 6 أحرف على الأقل");
+
+ if(password !== password2)
+  return toast("كلمتا المرور غير متطابقتين");
+
+
+ const email = makeEmail(name);
+
+
+ try{
+
+  const result =
+   await createUserWithEmailAndPassword(
+    auth,
+    email,
+    password
+   );
+
+
+  await setDoc(
+   doc(db,"users",result.user.uid),
+   {
+
+    name:name,
+
+    username:name.toLowerCase(),
+
+    email:email,
+
+    bio:"أهلاً بك في FamilyVerse!",
+
+    avatar:"😀",
+
+    frame:"none",
+
+    gold:1000,
+
+    ruby:50,
+
+    xp:0,
+
+    wins:0,
+
+    puzzles:0,
+
+    streak:0,
+
+    inventory:[],
+
+    lastRewardAt:null,
+
+    createdAt:serverTimestamp()
+
+   }
+  );
+
+
+  toast("🎉 تم إنشاء الحساب!");
+
+ }catch(error){
+
+  console.error(error);
+
+  if(error.code === "auth/email-already-in-use"){
+
+   toast("❌ اسم المستخدم مستخدم بالفعل");
+
+  }else if(error.code === "auth/weak-password"){
+
+   toast("❌ كلمة المرور ضعيفة");
+
+  }else{
+
+   toast("❌ حدث خطأ: "+error.message);
+
+  }
+
+ }
+
+};
+
+
+/* ================= LOGIN ================= */
+
+window.loginUser = async function(){
+
+ const name =
+  $("loginName").value.trim();
+
+ const password =
+  $("loginPassword").value;
+
+
+ if(!name || !password)
+  return toast("اكتب اسم المستخدم وكلمة المرور");
+
+
+ const email = makeEmail(name);
+
+
+ try{
+
+  await signInWithEmailAndPassword(
+   auth,
+   email,
+   password
+  );
+
+ }catch(error){
+
+  console.error(error);
+
+  if(
+   error.code === "auth/invalid-credential" ||
+   error.code === "auth/wrong-password" ||
+   error.code === "auth/user-not-found"
+  ){
+
+   toast("❌ اسم المستخدم أو كلمة المرور غير صحيحة");
+
+  }else{
+
+   toast("❌ حدث خطأ في تسجيل الدخول");
+
+  }
+
+ }
+
+};
+
+
+/* ================= AUTH STATE ================= */
+
+onAuthStateChanged(auth,async user=>{
+
+ if(!user){
+
+  $("login").classList.remove("hidden");
+
+  $("app").classList.add("hidden");
+
+  return;
+
+ }
+
+
+ currentUser = user;
+
+
+ try{
+
+  const ref =
+   doc(db,"users",user.uid);
+
+  const snap =
+   await getDoc(ref);
+
+
+  if(snap.exists()){
+
+   currentProfile = snap.data();
+
+   enterApp();
+
+  }else{
+
+   toast("الحساب موجود لكن بيانات البروفايل غير موجودة");
+
+  }
+
+ }catch(error){
+
+  console.error(error);
+
+  toast("تعذر تحميل بيانات الحساب");
+
+ }
+
+});
+
+
+/* ================= ENTER APP ================= */
+
+function enterApp(){
+
+ $("login").classList.add("hidden");
+
+ $("app").classList.remove("hidden");
+
+ updateProfileUI();
+
+ listenMembers();
+
+ listenGroup();
+
+ renderShop();
+
+ startRewardTimer();
+
+}
+
+
+/* ================= PROFILE ================= */
+
+function updateProfileUI(){
+
+ const p = currentProfile || {};
+
+ const name =
+  p.name || "User";
+
+ const avatar =
+  p.avatar || "😀";
+
+ const frame =
+  p.frame || "none";
+
+
+ $("meName").textContent = name;
+
+ $("meXP").textContent =
+  (p.xp || 0) + " XP";
+
+
+ $("meAvatar").textContent = avatar;
+
+
+ $("profileAvatar").textContent = avatar;
+
+
+ $("profileAvatar").className =
+  "avatar " +
+  (
+   frame === "purple" ? "frame-purple" :
+   frame === "gold" ? "frame-gold" :
+   frame === "ruby" ? "frame-ruby" :
+   frame === "cyan" ? "frame-cyan" :
+   ""
+  );
+
+
+ $("profileName").textContent =
+  name;
+
+
+ $("profileBio").textContent =
+  p.bio || "أهلاً بك في FamilyVerse!";
+
+
+ $("profileXP").textContent =
+  p.xp || 0;
+
+
+ $("homeXP").textContent =
+  p.xp || 0;
+
+
+ $("wins").textContent =
+  p.wins || 0;
+
+
+ $("puzzles").textContent =
+  p.puzzles || 0;
+
+
+ $("streak").textContent =
+  (p.streak || 0) + " 🔥";
+
+
+ const level =
+  Math.floor((p.xp || 0) / 250) + 1;
+
+
+ $("profileLevel").textContent =
+  level;
+
+
+ $("homeLevel").textContent =
+  level;
+
+
+ updateCurrencyUI();
+
+}
+
+
+/* ================= PROFILE EDIT ================= */
+
+const avatars = [
+ "😀","😎","🤓","🥳","🤩",
+ "😇","🦊","🐺","🐼","🐸",
+ "🦁","🐯","🐨","🐵","🐙",
+ "🤖","👽","👻","👑","🔥",
+ "⚡","🌟","🎮","♟️","🚀"
+];
+
+
+function renderAvatarOptions(){
+
+ $("avatarGrid").innerHTML =
+  avatars.map(a=>`
+
+   <button
+    class="avatar-option"
+    onclick="selectAvatar('${a}')">
+    ${a}
+   </button>
+
+  `).join("");
+
+}
+
+
+window.openProfileEditor = function(){
+
+ $("editName").value =
+  currentProfile?.name || "";
+
+ $("editBio").value =
+  currentProfile?.bio || "";
+
+ selectedAvatar =
+  currentProfile?.avatar || "😀";
+
+ selectedFrame =
+  currentProfile?.frame || "none";
+
+ renderAvatarOptions();
+
+ $("profileModal").classList.remove("hidden");
+
+};
+
+
+window.selectAvatar = function(a){
+
+ selectedAvatar = a;
+
+ toast("🖼️ تم اختيار الصورة");
+
+};
+
+
+window.selectFrame = function(frame){
+
+ selectedFrame = frame;
+
+ toast("🎨 تم اختيار الإطار");
+
+};
+
+
+window.saveProfile = async function(){
+
+ const name =
+  $("editName").value.trim();
+
+ const bio =
+  $("editBio").value.trim();
+
+
+ if(name.length < 3)
+  return toast("الاسم قصير جداً");
+
+
+ try{
+
+  await setDoc(
+   doc(db,"users",currentUser.uid),
+   {
+    name:name,
+    bio:bio,
+    avatar:selectedAvatar,
+    frame:selectedFrame
+   },
+   {merge:true}
+  );
+
+
+  currentProfile = {
+   ...currentProfile,
+   name:name,
+   bio:bio,
+   avatar:selectedAvatar,
+   frame:selectedFrame
+  };
+
+
+  updateProfileUI();
+
+  closeModal("profileModal");
+
+  toast("✅ تم تحديث البروفايل");
+
+ }catch(error){
+
+  console.error(error);
+
+  toast("❌ لم يتم حفظ البروفايل");
+
+ }
+
+};
+
+
+/* ================= MODALS ================= */
+
+window.closeModal = function(id){
+
+ $(id).classList.add("hidden");
+
+};
+
+
+/* ================= LOGOUT ================= */
+
+window.logout = async function(){
+
+ unsubs.forEach(
+  fn => fn && fn()
+ );
+
+ unsubs = [];
+
+ if(rewardInterval)
+  clearInterval(rewardInterval);
+
+ await signOut(auth);
+
+};
+
+
+/* ================= PAGES ================= */
+
+const titles = {
+
+ home:"عالم العيلة 🏠",
+
+ members:"أفراد العيلة 👥",
+
+ private:"الرسائل الخاصة 🔒",
+
+ familychat:"الشات الجماعي 💬",
+
+ profile:"البروفايل 👤",
+
+ challenges:"التحديات 🎮",
+
+ games:"الألعاب 🕹️",
+
+ shop:"المتجر 🛒"
+
+};
+
+
+window.page = function(id){
+
+ document
+  .querySelectorAll(".page")
+  .forEach(
+   x=>x.classList.remove("active")
+  );
+
+
+ $(id).classList.add("active");
+
+
+ document
+  .querySelectorAll(".nav button")
+  .forEach(
+   b=>{
+    const onclick =
+     b.getAttribute("onclick") || "";
+
+    b.classList.toggle(
+     "active",
+     onclick === `page('${id}')`
+    );
+
+   }
+  );
+
+
+ $("title").textContent =
+  titles[id] || "FamilyVerse";
+
+};
+
+
+/* ================= MEMBERS ================= */
+
+function listenMembers(){
+
+ const q =
+  query(
+   collection(db,"users"),
+   orderBy("name"),
+   limit(100)
+  );
+
+
+ const unsub =
+  onSnapshot(q,snapshot=>{
+
+   const arr =
+    snapshot.docs.map(
+     d=>({
+      uid:d.id,
+      ...d.data()
+     })
+    );
+
+
+   $("membersList").innerHTML =
+    arr.map(p=>`
+
+     <div class="person">
+
+      <div class="actions">
+
+       <div class="avatar">
+        ${escapeHTML(
+         p.avatar ||
+         (p.name || "?")
+          .charAt(0)
+          .toUpperCase()
+        )}
+       </div>
+
+       <div>
+        <b>
+         ${escapeHTML(p.name || "User")}
+        </b>
+
+        <br>
+
+        <span class="muted">
+         ${p.xp || 0} XP
+        </span>
+       </div>
+
+      </div>
+
+
+      ${
+       p.uid !== currentUser.uid
+       ?
+       `
+       <button
+        class="primary"
+        onclick="openPrivate('${p.uid}')">
+        🔒 رسالة
+       </button>
+       `
+       :
+       ""
+      }
+
+     </div>
+
+    `).join("");
+
+
+   $("homeMembers").innerHTML =
+    arr.slice(0,8).map(p=>`
+
+     <div class="card member">
+
+      <div class="avatar">
+       ${escapeHTML(
+        p.avatar ||
+        (p.name || "?")
+         .charAt(0)
+         .toUpperCase()
+       )}
+      </div>
+
+      <div>
+
+       <b>
+        ${escapeHTML(p.name || "User")}
+       </b>
+
+       <br>
+
+       <span class="muted">
+        ${p.xp || 0} XP
+       </span>
+
+      </div>
+
+     </div>
+
+    `).join("");
+
+
+   $("privatePeople").innerHTML =
+    arr
+     .filter(p=>p.uid !== currentUser.uid)
+     .map(p=>`
+
+      <div class="person">
+
+       <div class="actions">
+
+        <div class="avatar">
+         ${escapeHTML(
+          p.avatar ||
+          (p.name || "?")
+           .charAt(0)
+           .toUpperCase()
+         )}
+        </div>
+
+        <div>
+
+         <b>
+          ${escapeHTML(p.name || "User")}
+         </b>
+
+         <br>
+
+         <span class="muted">
+          عضو في FamilyVerse
+         </span>
+
+        </div>
+
+       </div>
+
+       <button
+        class="primary"
+        style="margin-top:10px"
+        onclick="openPrivate('${p.uid}')">
+
+        فتح المحادثة 🔒
+
+       </button>
+
+      </div>
+
+     `).join("");
+
+  });
+
+ unsubs.push(unsub);
+
+}
+
+
+/* ================= GROUP CHAT ================= */
+
+function listenGroup(){
+
+ const q =
+  query(
+   collection(db,"groupMessages"),
+   where("room","==",currentRoom),
+   orderBy("createdAt","desc"),
+   limit(100)
+  );
+
+
+ const unsub =
+  onSnapshot(q,snapshot=>{
+
+   const arr =
+    snapshot.docs
+     .map(d=>d.data())
+     .reverse();
+
+
+   renderMessages(
+    $("groupMessages"),
+    arr
+   );
+
+  });
+
+ unsubs.push(unsub);
+
+}
+
+
+function renderMessages(el,arr){
+
+ el.innerHTML =
+  arr.map(m=>`
+
+   <div class="msg ${
+    m.uid === currentUser.uid
+    ? "me"
+    : ""
+   }">
+
+    <b>
+     ${escapeHTML(m.name || "User")}
+    </b>
+
+    <br>
+
+    ${escapeHTML(m.text)}
+
+    <br>
+
+    <small>
+     ${
+      m.createdAt?.toDate
+      ?
+      m.createdAt.toDate()
+       .toLocaleString("ar-EG")
+      :
+      ""
+     }
+    </small>
+
+   </div>
+
+  `).join("");
+
+
+ el.scrollTop =
+  el.scrollHeight;
+
+}
+
+
+/* ================= ROOMS ================= */
+
+window.setRoom =
+ function(room,button){
+
+  currentRoom = room;
+
+
+  document
+   .querySelectorAll(".roomtabs button")
+   .forEach(
+    b=>b.classList.remove("active")
+   );
+
+
+  button.classList.add("active");
+
+
+  listenGroup();
+
+ };
+
+
+/* ================= SEND GROUP ================= */
+
+window.sendGroup =
+ async function(){
+
+  const input =
+   $("groupInput");
+
+  const text =
+   input.value.trim();
+
+
+  if(!text)
+   return;
+
+
+  try{
+
+   await addDoc(
+    collection(db,"groupMessages"),
+    {
+     room:currentRoom,
+     uid:currentUser.uid,
+     name:currentProfile.name,
+     text:text,
+     createdAt:serverTimestamp()
+    }
+   );
+
+
+   input.value = "";
+
+  }catch(error){
+
+   console.error(error);
+
+   toast("❌ لم يتم إرسال الرسالة");
+
+  }
+
+ };
+
+
+/* ================= PRIVATE CHAT ================= */
+
+window.openPrivate =
+ async function(uid){
+
+  if(uid === currentUser.uid)
+   return toast("لا يمكنك إرسال رسالة لنفسك");
+
+
+  privateUid = uid;
+
+
+  $("privateChat")
+   .classList.remove("hidden");
+
+
+  const snap =
+   await getDoc(
+    doc(db,"users",uid)
+   );
+
+
+  $("privateTitle").textContent =
+   "🔒 " +
+   (snap.data()?.name || "محادثة خاصة");
+
+
+  listenPrivate();
+
+  page("private");
+
+ };
+
+
+function conversationId(a,b){
+
+ return [a,b]
+  .sort()
+  .join("_");
+
+}
+
+
+function listenPrivate(){
+
+ if(!privateUid)
+  return;
+
+
+ const cid =
+  conversationId(
+   currentUser.uid,
+   privateUid
+  );
+
+
+ const q =
+  query(
+   collection(db,"privateMessages"),
+   where(
+    "conversationId",
+    "==",
+    cid
+   ),
+   orderBy("createdAt","asc"),
+   limit(100)
+  );
+
+
+ const unsub =
+  onSnapshot(q,snapshot=>{
+
+   renderMessages(
+    $("privateMessages"),
+    snapshot.docs.map(
+     d=>d.data()
+    )
+   );
+
+  });
+
+
+ unsubs.push(unsub);
+
+}
+
+
+/* ================= SEND PRIVATE ================= */
+
+window.sendPrivate =
+ async function(){
+
+  const input =
+   $("privateInput");
+
+  const text =
+   input.value.trim();
+
+
+  if(!text || !privateUid)
+   return;
+
+
+  const cid =
+   conversationId(
+    currentUser.uid,
+    privateUid
+   );
+
+
+  try{
+
+   await addDoc(
+    collection(db,"privateMessages"),
+    {
+
+     conversationId:cid,
+
+     from:currentUser.uid,
+
+     to:privateUid,
+
+     uid:currentUser.uid,
+
+     name:currentProfile.name,
+
+     text:text,
+
+     createdAt:serverTimestamp()
+
+    }
+   );
+
+
+   input.value = "";
+
+  }catch(error){
+
+   console.error(error);
+
+   toast("❌ لم يتم إرسال الرسالة");
+
+  }
+
+ };
+
+
+/* ================= XP ================= */
+
+window.addXP =
+ async function(n){
+
+  try{
+
+   const ref =
+    doc(db,"users",currentUser.uid);
+
+
+   const snap =
+    await getDoc(ref);
+
+
+   const p =
+    snap.data() || {};
+
+
+   const newXP =
+    (p.xp || 0) + n;
+
+
+   const newWins =
+    (p.wins || 0) + 1;
+
+
+   await setDoc(
+    ref,
+    {
+     xp:newXP,
+     wins:newWins
+    },
+    {merge:true}
+   );
+
+
+   currentProfile = {
+    ...p,
+    xp:newXP,
+    wins:newWins
+   };
+
+
+   updateProfileUI();
+
+
+   toast(`🎉 +${n} XP`);
+
+  }catch(error){
+
+   console.error(error);
+
+   toast("❌ لم يتم تحديث XP");
+
+  }
+
+ };
+
+
+/* ================= HOURLY REWARD ================= */
+
+window.claimHourlyReward =
+ async function(){
+
+  if(!currentUser)
+   return;
+
+
+  const now =
+   Date.now();
+
+
+  const last =
+   currentProfile?.lastRewardAt?.toMillis
+   ?
+   currentProfile.lastRewardAt.toMillis()
+   :
+   0;
+
+
+  const hour =
+   60 * 60 * 1000;
+
+
+  if(last && now - last < hour){
+
+   const remaining =
+    hour - (now-last);
+
+   return toast(
+    "⏳ المكافأة القادمة بعد " +
+    Math.ceil(remaining/60000) +
+    " دقيقة"
+   );
+
+  }
+
+
+  const newGold =
+   getGold() + 1000;
+
+
+  const newRuby =
+   getRuby() + 50;
+
+
+  const ref =
+   doc(db,"users",currentUser.uid);
+
+
+  try{
+
+   await setDoc(
+    ref,
+    {
+     gold:newGold,
+     ruby:newRuby,
+     lastRewardAt:serverTimestamp()
+    },
+    {merge:true}
+   );
+
+
+   currentProfile = {
+    ...currentProfile,
+    gold:newGold,
+    ruby:newRuby,
+    lastRewardAt:{
+     toMillis:()=>Date.now()
+    }
+   };
+
+
+   updateProfileUI();
+
+   toast("🎁 +1000 ذهب و +50 ياقوت");
+
+  }catch(error){
+
+   console.error(error);
+
+   toast("❌ لم يتم استلام المكافأة");
+
+  }
+
+ };
+
+
+function startRewardTimer(){
+
+ if(rewardInterval)
+  clearInterval(rewardInterval);
+
+
+ rewardInterval =
+  setInterval(()=>{
+
+   if(!currentProfile)
+    return;
+
+
+   const last =
+    currentProfile.lastRewardAt?.toMillis
+    ?
+    currentProfile.lastRewardAt.toMillis()
+    :
+    0;
+
+
+   if(!last){
+
+    $("rewardTimer").textContent =
+     "🎁 المكافأة متاحة الآن";
+
+    return;
+
+   }
+
+
+   const remaining =
+    60*60*1000 -
+    (Date.now()-last);
+
+
+   if(remaining <= 0){
+
+    $("rewardTimer").textContent =
+     "🎁 المكافأة متاحة الآن";
+
+   }else{
+
+    const minutes =
+     Math.floor(remaining/60000);
+
+    const seconds =
+     Math.floor((remaining%60000)/1000);
+
+    $("rewardTimer").textContent =
+     `⏳ المكافأة القادمة: ${minutes} دقيقة و ${seconds} ثانية`;
+
+   }
+
+  },1000);
+
+}
+
+
+/* ================= EXCHANGE ================= */
+
+window.openExchange = function(){
+
+ $("exchangeAmount").value = "";
+
+ $("exchangeModal").classList.remove("hidden");
+
+};
+
+
+window.exchangeGoldToRuby = async function(){
+
+ const amount =
+  Number($("exchangeAmount").value);
+
+
+ if(!Number.isInteger(amount) || amount < 1)
+  return toast("اكتب عدد صحيح");
+
+
+ const goldCost =
+  amount * 100;
+
+
+ if(getGold() < goldCost)
+  return toast("❌ الذهب غير كافٍ");
+
+
+ const newGold =
+  getGold() - goldCost;
+
+
+ const newRuby =
+  getRuby() + amount;
+
+
+ await updateWallet(
+  newGold,
+  newRuby
+ );
+
+
+ toast(`💎 حصلت على ${amount} ياقوت`);
+
+};
+
+
+window.exchangeRubyToGold = async function(){
+
+ const amount =
+  Number($("exchangeAmount").value);
+
+
+ if(!Number.isInteger(amount) || amount < 1)
+  return toast("اكتب عدد صحيح");
+
+
+ if(getRuby() < amount)
+  return toast("❌ الياقوت غير كافٍ");
+
+
+ const newRuby =
+  getRuby() - amount;
+
+
+ const newGold =
+  getGold() + amount*100;
+
+
+ await updateWallet(
+  newGold,
+  newRuby
+ );
+
+
+ toast(`🪙 حصلت على ${amount*100} ذهب`);
+
+};
+
+
+async function updateWallet(gold,ruby){
+
+ try{
+
+  await setDoc(
+   doc(db,"users",currentUser.uid),
+   {
+    gold:gold,
+    ruby:ruby
+   },
+   {merge:true}
+  );
+
+
+  currentProfile = {
+   ...currentProfile,
+   gold:gold,
+   ruby:ruby
+  };
+
+
+  updateProfileUI();
+
+ }catch(error){
+
+  console.error(error);
+
+  toast("❌ حدث خطأ في التحويل");
+
+ }
+
+}
+
+
+/* ================= SHOP ================= */
+
+const shopItems = [
+
+ {
+  id:"frame_gold",
+  icon:"🟡",
+  name:"الإطار الذهبي",
+  description:"إطار مميز للبروفايل",
+  price:5000,
+  currency:"gold",
+  type:"frame",
+  value:"gold"
+ },
+
+ {
+  id:"frame_ruby",
+  icon:"🔴",
+  name:"إطار الياقوت",
+  description:"إطار نادر",
+  price:100,
+  currency:"ruby",
+  type:"frame",
+  value:"ruby"
+ },
+
+ {
+  id:"frame_cyan",
+  icon:"🔵",
+  name:"الإطار السماوي",
+  description:"إطار مستقبلي",
+  price:3000,
+  currency:"gold",
+  type:"frame",
+  value:"cyan"
+ },
+
+ {
+  id:"avatar_robot",
+  icon:"🤖",
+  name:"Avatar Robot",
+  description:"صورة روبوت",
+  price:2000,
+  currency:"gold",
+  type:"avatar",
+  value:"🤖"
+ },
+
+ {
+  id:"avatar_crown",
+  icon:"👑",
+  name:"Avatar King",
+  description:"صورة التاج",
+  price:5000,
+  currency:"gold",
+  type:"avatar",
+  value:"👑"
+ },
+
+ {
+  id:"avatar_alien",
+  icon:"👽",
+  name:"Avatar Alien",
+  description:"صورة فضائية",
+  price:50,
+  currency:"ruby",
+  type:"avatar",
+  value:"👽"
+ }
+
+];
+
+
+function renderShop(){
+
+ $("shopGrid").innerHTML =
+  shopItems.map(item=>`
+
+   <div class="shop-item">
+
+    <div class="shop-icon">
+     ${item.icon}
+    </div>
+
+    <h3>
+     ${item.name}
+    </h3>
+
+    <p class="muted">
+     ${item.description}
+    </p>
+
+    <div class="price">
+     ${
+      item.currency === "gold"
+      ?
+      `🪙 ${item.price}`
+      :
+      `💎 ${item.price}`
+     }
+    </div>
+
+    <button
+     class="primary"
+     onclick="buyItem('${item.id}')">
+     شراء
+    </button>
+
+   </div>
+
+  `).join("");
+
+}
+
+
+window.buyItem = async function(id){
+
+ const item =
+  shopItems.find(x=>x.id === id);
+
+
+ if(!item)
+  return;
+
+
+ const inventory =
+  currentProfile.inventory || [];
+
+
+ if(inventory.includes(id))
+  return toast("✅ هذا العنصر موجود لديك بالفعل");
+
+
+ const balance =
+  item.currency === "gold"
+  ?
+  getGold()
+  :
+  getRuby();
+
+
+ if(balance < item.price)
+  return toast("❌ رصيدك غير كافٍ");
+
+
+ let gold =
+  getGold();
+
+ let ruby =
+  getRuby();
+
+
+ if(item.currency === "gold")
+  gold -= item.price;
+ else
+  ruby -= item.price;
+
+
+ const newInventory =
+  [...inventory,id];
+
+
+ try{
+
+  await setDoc(
+   doc(db,"users",currentUser.uid),
+   {
+    gold:gold,
+    ruby:ruby,
+    inventory:newInventory
+   },
+   {merge:true}
+  );
+
+
+  currentProfile = {
+   ...currentProfile,
+   gold:gold,
+   ruby:ruby,
+   inventory:newInventory
+  };
+
+
+  if(item.type === "frame"){
+
+   currentProfile.frame =
+    item.value;
+
+   await setDoc(
+    doc(db,"users",currentUser.uid),
+    {frame:item.value},
+    {merge:true}
+   );
+
+  }
+
+
+  if(item.type === "avatar"){
+
+   currentProfile.avatar =
+    item.value;
+
+   await setDoc(
+    doc(db,"users",currentUser.uid),
+    {avatar:item.value},
+    {merge:true}
+   );
+
+  }
+
+
+  updateProfileUI();
+
+  toast("🛒 تم شراء العنصر!");
+
+ }catch(error){
+
+  console.error(error);
+
+  toast("❌ لم تتم عملية الشراء");
+
+ }
+
+};
+
+
+/* ================= XO ================= */
+
+let xoBoard = [];
+let xoTurn = "X";
+let xoGameOver = false;
+
+
+window.openXO = function(){
+
+ $("xoModal").classList.remove("hidden");
+
+ resetXO();
+
+};
+
+
+window.resetXO = function(){
+
+ xoBoard =
+  ["","","","","","","","",""];
+
+ xoTurn = "X";
+
+ xoGameOver = false;
+
+ renderXO();
+
+ $("xoStatus").textContent =
+  "الدور: X";
+
+};
+
+
+function renderXO(){
+
+ $("xoBoard").innerHTML =
+  xoBoard.map((v,i)=>`
+
+   <button
+    class="xo-cell"
+    onclick="playXO(${i})">
+    ${v}
+   </button>
+
+  `).join("");
+
+}
+
+
+window.playXO = async function(i){
+
+ if(xoGameOver || xoBoard[i])
+  return;
+
+
+ xoBoard[i] =
+  xoTurn;
+
+
+ renderXO();
+
+
+ const winner =
+  checkXOWinner();
+
+
+ if(winner){
+
+  xoGameOver = true;
+
+  $("xoStatus").textContent =
+   `🎉 الفائز: ${winner}`;
+
+  if(winner === "X"){
+
+   await rewardGameWinner(30);
+
+  }
+
+  return;
+
+ }
+
+
+ if(xoBoard.every(Boolean)){
+
+  xoGameOver = true;
+
+  $("xoStatus").textContent =
+   "🤝 تعادل";
+
+  return;
+
+ }
+
+
+ xoTurn =
+  xoTurn === "X"
+  ?
+  "O"
+  :
+  "X";
+
+
+ $("xoStatus").textContent =
+  `الدور: ${xoTurn}`;
+
+};
+
+
+function checkXOWinner(){
+
+ const wins = [
+
+  [0,1,2],
+  [3,4,5],
+  [6,7,8],
+
+  [0,3,6],
+  [1,4,7],
+  [2,5,8],
+
+  [0,4,8],
+  [2,4,6]
+
+ ];
+
+
+ for(const [a,b,c] of wins){
+
+  if(
+   xoBoard[a] &&
+   xoBoard[a] === xoBoard[b] &&
+   xoBoard[a] === xoBoard[c]
+  )
+   return xoBoard[a];
+
+ }
+
+
+ return null;
+
+}
+
+
+/* ================= CHESS ================= */
+
+/*
+ نسخة شطرنج محلية مبسطة.
+ الهدف هنا توفير لوحة لعب داخل FamilyVerse.
+*/
+
+const initialChess = [
+
+ ["♜","♞","♝","♛","♚","♝","♞","♜"],
+ ["♟","♟","♟","♟","♟","♟","♟","♟"],
+
+ ["","","","","","","",""],
+ ["","","","","","","",""],
+ ["","","","","","","",""],
+ ["","","","","","","",""],
+
+ ["♙","♙","♙","♙","♙","♙","♙","♙"],
+ ["♖","♘","♗","♕","♔","♗","♘","♖"]
+
+];
+
+
+let chessBoard = [];
+let chessTurn = "white";
+let chessSelected = null;
+
+
+window.openChess = function(){
+
+ $("chessModal").classList.remove("hidden");
+
+ resetChess();
+
+};
+
+
+window.resetChess = function(){
+
+ chessBoard =
+  initialChess.map(row=>[...row]);
+
+ chessTurn = "white";
+
+ chessSelected = null;
+
+ renderChess();
+
+};
+
+
+function pieceColor(piece){
+
+ if(!piece)
+  return null;
+
+ return "♙♖♘♗♕♔".includes(piece)
+  ?
+  "white"
+  :
+  "black";
+
+}
+
+
+function renderChess(){
+
+ const board =
+  $("chessBoard");
+
+ board.innerHTML = "";
+
+
+ for(let r=0;r<8;r++){
+
+  for(let c=0;c<8;c++){
+
+   const cell =
+    document.createElement("button");
+
+   const piece =
+    chessBoard[r][c];
+
+   cell.className =
+    "chess-cell " +
+    ((r+c)%2===0
+     ?
+     "chess-light"
+     :
+     "chess-dark");
+
+
+   if(
+    chessSelected &&
+    chessSelected.r === r &&
+    chessSelected.c === c
+   ){
+
+    cell.classList.add(
+     "chess-selected"
+    );
+
+   }
+
+
+   cell.textContent =
+    piece;
+
+
+   cell.onclick =
+    ()=>clickChess(r,c);
+
+
+   board.appendChild(cell);
+
+  }
+
+ }
+
+
+ $("chessStatus").textContent =
+  chessTurn === "white"
+  ?
+  "دور الأبيض"
+  :
+  "دور الأسود";
+
+}
+
+
+function clickChess(r,c){
+
+ const piece =
+  chessBoard[r][c];
+
+
+ if(chessSelected){
+
+  const sr =
+   chessSelected.r;
+
+  const sc =
+   chessSelected.c;
+
+
+  if(
+   sr === r &&
+   sc === c
+  ){
+
+   chessSelected = null;
+
+   renderChess();
+
+   return;
+
+  }
+
+
+  const selectedPiece =
+   chessBoard[sr][sc];
+
+
+  if(
+   piece &&
+   pieceColor(piece) ===
+   pieceColor(selectedPiece)
+  ){
+
+   chessSelected = {
+    r:r,
+    c:c
+   };
+
+   renderChess();
+
+   return;
+
+  }
+
+
+  chessBoard[r][c] =
+   selectedPiece;
+
+  chessBoard[sr][sc] =
+   "";
+
+
+  chessSelected = null;
+
+
+  chessTurn =
+   chessTurn === "white"
+   ?
+   "black"
+   :
+   "white";
+
+
+  renderChess();
+
+  return;
+
+ }
+
+
+ if(
+  piece &&
+  pieceColor(piece) === chessTurn
+ ){
+
+  chessSelected = {
+   r:r,
+   c:c
+  };
+
+  renderChess();
+
+ }
+
+}
+
+
+/* ================= GAME REWARD ================= */
+
+async function rewardGameWinner(xp){
+
+ try{
+
+  const ref =
+   doc(db,"users",currentUser.uid);
+
+  const snap =
+   await getDoc(ref);
+
+  const p =
+   snap.data() || {};
+
+
+  const newXP =
+   (p.xp || 0) + xp;
+
+
+  const newWins =
+   (p.wins || 0) + 1;
+
+
+  await setDoc(
+   ref,
+   {
+    xp:newXP,
+    wins:newWins
+   },
+   {merge:true}
+  );
+
+
+  currentProfile = {
+   ...p,
+   xp:newXP,
+   wins:newWins
+  };
+
+
+  updateProfileUI();
+
+  toast(`🏆 +${xp} XP`);
+
+ }catch(error){
+
+  console.error(error);
+
+ }
+
+}
+
+
+</script>
+
+</body>
+</html>
+
+
