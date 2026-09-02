@@ -8,6 +8,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-storage-compat.js"></script>
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -725,6 +726,13 @@ border:1px solid var(--line);
 border-radius:14px;
 }
 
+.notification-count{position:absolute;top:-5px;right:-5px;min-width:20px;height:20px;padding:0 5px;border-radius:10px;background:var(--danger);color:#fff;font-size:11px;display:grid;place-items:center;border:2px solid var(--bg)}
+.notification-panel{position:fixed;top:65px;right:28px;width:min(380px,calc(100vw - 30px));max-height:65vh;overflow:auto;background:#0b1020;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);z-index:100;padding:10px}
+.notification-item{display:flex;gap:10px;padding:12px;border-bottom:1px solid var(--line);cursor:pointer}.notification-item:last-child{border-bottom:0}.notification-item.unread{background:rgba(139,92,246,.08)}
+.notification-avatar{width:42px;height:42px;border-radius:50%;overflow:hidden;flex:none;background:#171e35;display:grid;place-items:center;font-size:20px}.notification-avatar img{width:100%;height:100%;object-fit:cover}
+.chat-user{display:flex;align-items:center;gap:9px;margin-bottom:7px}.chat-avatar{width:38px;height:38px;border-radius:50%;overflow:hidden;flex:none;background:#171e35;display:grid;place-items:center;font-size:18px}.chat-avatar img{width:100%;height:100%;object-fit:cover}
+.chat-media{max-width:min(280px,100%);border-radius:14px;margin-top:7px;display:block}audio.chat-media{width:min(300px,100%)}.composer{flex-wrap:wrap}.composer-tools{display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+.file-btn{display:inline-flex;align-items:center;justify-content:center;min-width:45px;height:45px;border:1px solid var(--line);border-radius:14px;background:var(--card2);cursor:pointer}.file-btn input{display:none}.recording{background:rgba(255,93,115,.15);border-color:rgba(255,93,115,.4);color:#ff8192}
 @media(max-width:1000px){
 .sidebar{display:none}
 .main{margin-right:0}
@@ -794,6 +802,41 @@ gap:10px;
 .store{grid-template-columns:1fr}
 .top-title{font-size:17px}
 }
+
+.profile-music-box{padding:16px;margin-top:15px;border:1px solid var(--border);box-shadow:0 8px 25px rgba(0,0,0,.12)}
+.music-style-rounded{border-radius:22px}
+.music-style-square{border-radius:6px}
+.music-style-glass{border-radius:22px;background:rgba(255,255,255,.08);backdrop-filter:blur(12px)}
+.music-box-default{background:var(--card)}
+.music-box-purple{background:linear-gradient(135deg,#6d28d9,#a855f7)}
+.music-box-blue{background:linear-gradient(135deg,#2563eb,#06b6d4)}
+.music-box-green{background:linear-gradient(135deg,#15803d,#22c55e)}
+.music-box-gold{background:linear-gradient(135deg,#a16207,#f59e0b)}
+.profile-music-box audio{width:100%;margin-top:10px}
+.music-box-title{font-size:18px;font-weight:900}
+.music-box-name{margin-top:6px;font-weight:700}
+.music-box-settings{display:grid;gap:10px;margin-top:14px}
+.music-box-settings label{display:grid;gap:6px}
+
+
+.profile-music-box{padding:18px;margin-top:16px;border:1px solid var(--border);box-shadow:0 10px 30px rgba(0,0,0,.16);overflow:hidden}
+.music-box-head{display:flex;align-items:center;gap:12px}
+.music-box-icon{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:rgba(255,255,255,.18);font-size:24px;flex:0 0 46px}
+.music-box-title{font-size:18px;font-weight:950}
+.music-box-name{margin-top:4px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.profile-music-box audio{width:100%;margin-top:14px}
+.music-empty{margin-top:14px;padding:14px;border-radius:14px;background:rgba(255,255,255,.10)}
+.music-setting-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:600px){.music-setting-grid{grid-template-columns:1fr}}
+.music-box-default{background:var(--card)}
+.music-box-purple{background:linear-gradient(135deg,#6d28d9,#a855f7)}
+.music-box-blue{background:linear-gradient(135deg,#2563eb,#06b6d4)}
+.music-box-green{background:linear-gradient(135deg,#15803d,#22c55e)}
+.music-box-gold{background:linear-gradient(135deg,#a16207,#f59e0b)}
+.music-style-rounded{border-radius:22px}
+.music-style-square{border-radius:7px}
+.music-style-glass{border-radius:22px;background:rgba(255,255,255,.08);backdrop-filter:blur(12px)}
+
 </style>
 </head>
 
@@ -829,6 +872,9 @@ gap:10px;
 
 <div id="topTitle" class="top-title">الرئيسية</div>
 
+<div style="display:flex;align-items:center;gap:10px">
+<button class="btn" id="notificationBtn" onclick="toggleNotifications()" style="position:relative;padding:9px 12px">🔔<span id="notificationCount" class="notification-count hidden">0</span></button>
+<div id="notificationPanel" class="notification-panel hidden"></div>
 <div class="currency-mini">
 
 <div class="currency-pill gold">
@@ -841,6 +887,8 @@ gap:10px;
 
 </div>
 
+
+</div>
 </header>
 
 <section id="page" class="page"></section>
@@ -859,18 +907,19 @@ gap:10px;
 const firebaseConfig={
 apiKey:"AIzaSyD16uVyQo44733AykP6pc0j-Cys3EJ1-tc",
 authDomain:"familyverse-ae956.firebaseapp.com",
-databaseURL:"https://familyverse-ae956-default-rtdb.firebaseio.com", 
-projectId:"familyverse-ae956", 
-storageBucket:"familyverse-ae956.firebasestorage.app", 
-messagingSenderId:"149212761868", 
-appId:"1:149212761868:web:a9365dad907d125627c329", 
-measurementId:"G-Z2Y958JQ0S" 
+databaseURL:"https://familyverse-ae956-default-rtdb.firebaseio.com",
+projectId:"familyverse-ae956",
+storageBucket:"familyverse-ae956.firebasestorage.app",
+messagingSenderId:"149212761868",
+appId:"1:149212761868:web:a9365dad907d125627c329",
+measurementId:"G-Z2Y958JQ0S"
 }; 
  
 firebase.initializeApp(firebaseConfig); 
  
 const auth=firebase.auth(); 
-const db=firebase.firestore(); 
+const db=firebase.firestore();
+const storage=firebase.storage(); 
  
 let currentUser=null; 
 let profile=null; 
@@ -879,7 +928,12 @@ let currentPage="home";
 let profileUnsub=null; 
 let publicUnsub=null; 
 let privateUnsub=null; 
-let currentPrivateUser=null; 
+let currentPrivateUser=null;
+
+let notificationUnsub=null;
+let notificationReady=false;
+let notificationItems=[];
+let storiesUnsub=null; 
  
 let xoBoard=["","","","","","","","",""]; 
 let xoTurn="X"; 
@@ -903,6 +957,7 @@ const navItems=[
 ["games","🎮","الألعاب"], 
 ["store","🛍️","المتجر"], 
 ["publicChat","💬","الشات العام"], 
+["stories","📖","القصص"],
 ["privateChat","✉️","الشات الخاص"], 
 ["family","👨‍👩‍👧‍👦","العائلة"], 
 ["wallet","💼","المحفظة"], 
@@ -946,13 +1001,15 @@ publicUnsub=null;
 if(privateUnsub&&page!=="privateChat"){ 
 privateUnsub(); 
 privateUnsub=null; 
-} 
+}
+if(storiesUnsub&&page!=="stories"){storiesUnsub();storiesUnsub=null;} 
  
 ({ 
 home, 
 games, 
 store, 
 publicChat, 
+stories:storiesPage,
 privateChat, 
 family, 
 wallet, 
@@ -988,6 +1045,16 @@ return String(text??"").replace(/[&<>"']/g,c=>({
 } 
  
  
+/* =========================================================
+NOTIFICATIONS
+========================================================= */
+function startNotifications(){if(notificationUnsub)notificationUnsub();notificationReady=false;notificationUnsub=db.collection("notifications").where("recipientUid","==",currentUser.uid).limit(50).onSnapshot(snap=>{notificationItems=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt?.toMillis?b.createdAt.toMillis():0)-(a.createdAt?.toMillis?a.createdAt.toMillis():0));updateNotificationUI();if(notificationReady)snap.docChanges().filter(c=>c.type==="added").forEach(c=>{const n=c.doc.data();if(!n.read){toast(`💬 ${n.senderName||n.senderUsername||"شخص"} أرسل لك رسالة خاصة`);if("Notification" in window&&Notification.permission==="granted")new Notification("FamilyVerse 💬",{body:`${n.senderName||n.senderUsername||"شخص"} أرسل لك رسالة خاصة`});}});notificationReady=true;},e=>console.error("NOTIFICATIONS ERROR:",e));}
+function updateNotificationUI(){const count=notificationItems.filter(n=>!n.read).length;const el=document.getElementById("notificationCount");if(el){el.textContent=count;el.classList.toggle("hidden",count===0);}const panel=document.getElementById("notificationPanel");if(!panel||panel.classList.contains("hidden"))return;panel.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 6px 12px"><b>🔔 الإشعارات</b><button class="btn" onclick="markAllNotificationsRead()">تحديد الكل كمقروء</button></div>`+(notificationItems.length?notificationItems.slice(0,30).map(n=>`<div class="notification-item ${n.read?"":"unread"}" onclick="openNotification('${n.id}')"><div class="notification-avatar">${n.senderProfileImage?`<img src="${escapeHTML(n.senderProfileImage)}">`:escapeHTML(n.senderAvatar||"😀")}</div><div><b>${escapeHTML(n.senderName||n.senderUsername||"رسالة جديدة")}</b><div class="muted" style="font-size:12px">${escapeHTML(n.text||"لديك رسالة جديدة")}</div></div></div>`).join(""):"<div class='muted' style='padding:18px;text-align:center'>لا توجد إشعارات.</div>");}
+function toggleNotifications(){const panel=document.getElementById("notificationPanel");if(!panel)return;panel.classList.toggle("hidden");if(!panel.classList.contains("hidden")){if("Notification" in window&&Notification.permission==="default")Notification.requestPermission();updateNotificationUI();}}
+async function openNotification(id){const n=notificationItems.find(x=>x.id===id);if(!n)return;try{await db.collection("notifications").doc(id).update({read:true,readAt:firebase.firestore.FieldValue.serverTimestamp()});}catch(e){}document.getElementById("notificationPanel")?.classList.add("hidden");if(n.type==="private_message"&&n.senderUid){currentPrivateUser=n.senderUid;go("privateChat");}}
+async function markAllNotificationsRead(){const unread=notificationItems.filter(n=>!n.read);if(!unread.length)return;const batch=db.batch();unread.forEach(n=>batch.update(db.collection("notifications").doc(n.id),{read:true,readAt:firebase.firestore.FieldValue.serverTimestamp()}));try{await batch.commit();}catch(e){console.error(e);}}
+async function markConversationNotificationsRead(cid){try{const snap=await db.collection("notifications").where("recipientUid","==",currentUser.uid).limit(50).get();const batch=db.batch();let changed=false;snap.docs.forEach(d=>{const n=d.data();if(!n.read&&n.conversationId===cid){batch.update(d.ref,{read:true,readAt:firebase.firestore.FieldValue.serverTimestamp()});changed=true;}});if(changed)await batch.commit();}catch(e){console.error(e);}}
+
 /* ========================= 
 PROFILE 
 ========================= */ 
@@ -1001,7 +1068,11 @@ username:"",
 bio:"أهلاً بكم في FamilyVerse 💜", 
 avatar:"😀", 
 profileImage:"", 
-frame:"normal", 
+frame:"normal",
+profileMusic:"",
+profileMusicName:"",
+musicBoxColor:"default",
+musicBoxStyle:"rounded",
 status:"متاح", 
 title:"عضو العائلة", 
 favoriteGame:"XO", 
@@ -1080,7 +1151,11 @@ case"auth/too-many-requests":
 return"تمت محاولات كثيرة. انتظر قليلًا."; 
  
 case"auth/network-request-failed": 
-return"مشكلة في الإنترنت."; 
+return"مشكلة في الإنترنت.";
+case"auth/invalid-email":
+return"بيانات تسجيل الدخول غير صالحة.";
+case"auth/user-disabled":
+return"هذا الحساب تم تعطيله."; 
  
 default: 
 return"خطأ Firebase: "+(error.message||error.code||"غير معروف"); 
@@ -1258,47 +1333,33 @@ btn.textContent="إنشاء الحساب 🎉";
 } 
  
  
-async function login(){ 
- 
-const username= 
-document.getElementById("loginUsername").value.trim().toLowerCase(); 
- 
-const password= 
-document.getElementById("loginPassword").value; 
- 
-const btn=document.getElementById("loginBtn"); 
- 
-if(!username||!password) 
-return toast("اكتب اسم المستخدم وكلمة المرور"); 
- 
-btn.disabled=true; 
-btn.textContent="جارٍ الدخول..."; 
- 
-try{ 
- 
-await auth.signInWithEmailAndPassword( 
-makeInternalAuthId(username), 
-password 
-); 
- 
-}catch(error){ 
- 
-toast(firebaseAuthError(error)); 
- 
-}finally{ 
- 
-btn.disabled=false; 
-btn.textContent="دخول 🚀"; 
- 
-} 
- 
-} 
- 
- 
-/* ========================= 
-AVATAR 
-========================= */ 
- 
+async function login(){
+
+const username=document.getElementById("loginUsername").value.trim().toLowerCase();
+const password=document.getElementById("loginPassword").value;
+const btn=document.getElementById("loginBtn");
+
+if(!username||!password)return toast("اكتب اسم المستخدم وكلمة المرور");
+if(!/^[a-z0-9_.-]{3,20}$/.test(username))return toast("اسم المستخدم غير صالح");
+
+btn.disabled=true;
+btn.textContent="جارٍ الدخول...";
+try{
+  if(!firebase.apps.length) throw new Error("Firebase لم يتم تشغيله");
+  if(!auth) throw new Error("Firebase Authentication غير متاح");
+  await auth.signInWithEmailAndPassword(makeInternalAuthId(username),password);
+}catch(error){
+  console.error("LOGIN ERROR:",error);
+  let msg=firebaseAuthError(error);
+  if(error && error.code==="auth/operation-not-allowed") msg="Firebase Authentication غير مفعّل. فعّل Email/Password من Firebase Console > Authentication > Sign-in method.";
+  toast(msg);
+}finally{
+  btn.disabled=false;
+  btn.textContent="دخول 🚀";
+}
+}
+
+
 function avatarHTML(p=profile,small=false){ 
  
 const cls=`avatar frame-${p.frame||"normal"}`; 
@@ -1438,7 +1499,7 @@ onclick="go('store')">
 <div class="grid grid-3"> 
  
 <div class="card"> 
-<div class="muted">🪙 الذهب</div> 
+<div class="muted">💰 الذهب</div> 
 <div class="stat-value gold">${profile.gold||0}</div> 
 </div> 
  
@@ -1560,8 +1621,7 @@ list.map(p=>`
  
 <div class="card"> 
  
-<div class="person"> 
- 
+<div class="person" style="cursor:pointer" onclick="viewUserProfile(\'${p.id}\')">
 ${avatarHTML(p,true)} 
  
 <div style="flex:1;min-width:0"> 
@@ -1616,107 +1676,32 @@ onclick="startOnlineWith('${p.id}')">
 PUBLIC CHAT 
 ========================= */ 
  
-function publicChat(){ 
- 
-document.getElementById("page").innerHTML=` 
- 
-<h1 class="page-title">💬 الشات العام</h1> 
- 
-<p class="page-desc"> 
-تحدث مع أفراد FamilyVerse. 
-</p> 
- 
-<div class="card chat-card"> 
- 
-<div id="publicMessages" class="messages"> 
-<div class="muted">جاري تحميل الرسائل...</div> 
-</div> 
- 
-<div class="composer"> 
- 
-<input id="publicInput" 
-class="input" 
-placeholder="اكتب رسالتك..." 
-onkeydown="if(event.key==='Enter')sendPublic()"> 
- 
-<button class="btn btn-primary" 
-onclick="sendPublic()"> 
-إرسال 
-</button> 
- 
-</div> 
- 
-</div>`; 
- 
-publicUnsub= 
-db.collection("publicMessages") 
-.orderBy("createdAt","asc") 
-.limitToLast(100) 
-.onSnapshot(snap=>{ 
- 
-const box=document.getElementById("publicMessages"); 
- 
-if(!box)return; 
- 
-box.innerHTML=snap.docs.map(d=>{ 
- 
-const m=d.data(); 
- 
-return` 
- 
-<div class="message ${m.uid===currentUser.uid?"mine":""}"> 
- 
-<div class="message-user"> 
-${escapeHTML(m.username||"عضو")} 
-</div> 
- 
-${escapeHTML(m.text||"")} 
- 
-</div>`; 
- 
-}).join(""); 
- 
-box.scrollTop=box.scrollHeight; 
- 
-},e=>console.error(e)); 
- 
-} 
- 
- 
-async function sendPublic(){ 
- 
-const input=document.getElementById("publicInput"); 
-const text=input.value.trim(); 
- 
-if(!text)return; 
- 
-try{ 
- 
-await db.collection("publicMessages").add({ 
- 
-uid:currentUser.uid, 
-username:profile.username, 
-text, 
-createdAt:firebase.firestore.FieldValue.serverTimestamp() 
- 
-}); 
- 
-input.value=""; 
- 
-}catch(e){ 
- 
-console.error(e); 
-toast("تعذر إرسال الرسالة"); 
- 
-} 
- 
-} 
- 
- 
-/* ========================= 
-PRIVATE CHAT 
-========================= */ 
- 
+function chatMessageHTML(m){
+const frame=escapeHTML(m.frame||"normal");
+const avatar=m.profileImage?`<img src="${escapeHTML(m.profileImage)}" alt="صورة المستخدم">`:escapeHTML(m.avatar||"😀");
+let body=escapeHTML(m.text||"");
+if(m.type==="image"&&m.mediaUrl)body=`<img class="chat-media" src="${escapeHTML(m.mediaUrl)}" alt="صورة مرسلة" loading="lazy">`+(m.text?`<div style="margin-top:7px">${escapeHTML(m.text)}</div>`:"");
+if(m.type==="audio"&&m.mediaUrl)body=`<audio class="chat-media" controls preload="metadata" src="${escapeHTML(m.mediaUrl)}"></audio>`+(m.text?`<div style="margin-top:7px">${escapeHTML(m.text)}</div>`:"");
+return `<div class="message ${m.uid===currentUser.uid?"mine":""}"><div class="chat-user"><div class="chat-avatar avatar frame-${frame}">${avatar}</div><div><div style="font-weight:900">${escapeHTML(m.name||m.username||"عضو")}</div><div class="message-user">@${escapeHTML(m.username||"عضو")}</div></div></div>${body}</div>`;
+}
+async function uploadChatFile(file,folder){
+if(!file)return null;const isImage=file.type.startsWith("image/"),isAudio=file.type.startsWith("audio/");if(!isImage&&!isAudio)throw new Error("نوع الملف غير مدعوم");
+const max=isImage?5*1024*1024:10*1024*1024;if(file.size>max)throw new Error(isImage?"الصورة يجب ألا تتجاوز 5MB":"الصوت يجب ألا يتجاوز 10MB");
+const safeName=file.name.replace(/[^a-zA-Z0-9._-]/g,"_");const ref=storage.ref().child(`chatMedia/${folder}/${currentUser.uid}_${Date.now()}_${safeName}`);await ref.put(file,{contentType:file.type});return{url:await ref.getDownloadURL(),type:isImage?"image":"audio"};
+}
+function chatComposerHTML(prefix,sendFn){return `<div class="composer"><input id="${prefix}Input" class="input" placeholder="اكتب رسالتك..." onkeydown="if(event.key==='Enter')${sendFn}()"><div class="composer-tools"><label class="file-btn" title="إرسال صورة">🖼️<input id="${prefix}Image" type="file" accept="image/*" onchange="${sendFn}Image()"></label><label class="file-btn" title="إرسال صوت">🎵<input id="${prefix}Audio" type="file" accept="audio/*" onchange="${sendFn}Audio()"></label><button id="${prefix}Record" class="file-btn" title="تسجيل صوت" onclick="toggleRecording('${prefix}')">🎙️</button><button class="btn btn-primary" onclick="${sendFn}()">إرسال</button></div><div id="${prefix}UploadStatus" class="muted" style="width:100%;font-size:12px"></div></div>`;}
+async function sendChatMedia(prefix,type){const input=document.getElementById(prefix+(type==="image"?"Image":"Audio")),file=input?.files?.[0];if(!file)return;try{const st=document.getElementById(prefix+"UploadStatus");if(st)st.textContent="جارٍ رفع الملف...";const media=await uploadChatFile(file,currentPrivateUser||"public");if(prefix==="public")await sendPublic(null,media);else await sendPrivate(null,media);input.value="";if(st)st.textContent="";}catch(e){console.error(e);toast(e.message||"تعذر رفع الملف");}}
+function publicImage(){sendChatMedia("public","image")} function publicAudio(){sendChatMedia("public","audio")} function privateImage(){sendChatMedia("private","image")} function privateAudio(){sendChatMedia("private","audio")}
+function sendPublicImage(){publicImage()} function sendPublicAudio(){publicAudio()} function sendPrivateImage(){privateImage()} function sendPrivateAudio(){privateAudio()}
+let mediaRecorders={},mediaChunks={};
+async function toggleRecording(prefix){try{if(mediaRecorders[prefix]){mediaRecorders[prefix].stop();return;}const stream=await navigator.mediaDevices.getUserMedia({audio:true});const recorder=new MediaRecorder(stream);mediaChunks[prefix]=[];recorder.ondataavailable=e=>{if(e.data.size)mediaChunks[prefix].push(e.data)};recorder.onstop=async()=>{stream.getTracks().forEach(t=>t.stop());const blob=new Blob(mediaChunks[prefix],{type:recorder.mimeType||"audio/webm"});mediaRecorders[prefix]=null;const btn=document.getElementById(prefix+"Record");if(btn){btn.classList.remove("recording");btn.textContent="🎙️";}try{const file=new File([blob],`recording_${Date.now()}.webm`,{type:blob.type});const media=await uploadChatFile(file,currentPrivateUser||"public");if(prefix==="public")await sendPublic(null,media);else await sendPrivate(null,media);}catch(e){console.error(e);toast(e.message||"تعذر إرسال التسجيل");}};mediaRecorders[prefix]=recorder;recorder.start();const btn=document.getElementById(prefix+"Record");if(btn){btn.classList.add("recording");btn.textContent="⏹️";}toast("🎙️ التسجيل جارٍ... اضغط مرة أخرى للإرسال");}catch(e){console.error(e);toast("لا يمكن استخدام الميكروفون. اسمح للمتصفح بالوصول إلى الميكروفون.");}}
+function publicChat(){document.getElementById("page").innerHTML=`<h1 class="page-title">💬 الشات العام</h1><p class="page-desc">تحدث مع أفراد FamilyVerse.</p><div class="card chat-card"><div id="publicMessages" class="messages"><div class="muted">جاري تحميل الرسائل...</div></div>${chatComposerHTML("public","sendPublic")}</div>`;publicUnsub=db.collection("publicMessages").orderBy("createdAt","asc").limitToLast(100).onSnapshot(snap=>{const box=document.getElementById("publicMessages");if(!box)return;box.innerHTML=snap.docs.map(d=>chatMessageHTML(d.data())).join("");box.scrollTop=box.scrollHeight;},e=>console.error(e));}
+async function sendPublic(text=null,media=null){const input=document.getElementById("publicInput");text=text===null?(input?.value.trim()||""):text;if(!text&&!media)return;try{await db.collection("publicMessages").add({uid:currentUser.uid,username:profile.username,name:profile.name||profile.username,profileImage:profile.profileImage||"",avatar:profile.avatar||"😀",frame:profile.frame||"normal",text,type:media?.type||"text",mediaUrl:media?.url||"",createdAt:firebase.firestore.FieldValue.serverTimestamp()});if(input)input.value="";}catch(e){console.error(e);toast("تعذر إرسال الرسالة");}}
+
+/* =========================
+PRIVATE CHAT
+========================= */
+
 function conversationId(a,b){ 
  
 return[a,b].sort().join("_"); 
@@ -1724,7 +1709,9 @@ return[a,b].sort().join("_");
 } 
  
  
-function openPrivate(uid){ 
+function openPrivate(uid){
+if(!canMessageUser(uid))return;
+ 
  
 currentPrivateUser=uid; 
 go("privateChat"); 
@@ -1732,154 +1719,175 @@ go("privateChat");
 } 
  
  
-async function privateChat(){ 
- 
-if(!currentPrivateUser){ 
- 
-document.getElementById("page").innerHTML=` 
- 
-<div class="card"> 
- 
-<h2>✉️ الشات الخاص</h2> 
- 
-<p class="page-desc"> 
-اذهب إلى قسم العائلة واختر أحد الأعضاء. 
-</p> 
- 
-<button class="btn btn-primary" 
-onclick="go('family')"> 
-👨‍👩‍👧‍👦 فتح العائلة 
-</button> 
- 
-</div>`; 
- 
-return; 
- 
-} 
- 
-let otherName="عضو"; 
- 
-try{ 
- 
-const other= 
-await db.collection("users") 
-.doc(currentPrivateUser) 
-.get(); 
- 
-if(other.exists) 
-otherName= 
-other.data().name|| 
-other.data().username|| 
-"عضو"; 
- 
-}catch(e){} 
- 
-document.getElementById("page").innerHTML=` 
- 
-<h1 class="page-title"> 
-✉️ ${escapeHTML(otherName)} 
-</h1> 
- 
-<p class="page-desc">محادثة خاصة</p> 
- 
-<div class="card chat-card"> 
- 
-<div id="privateMessages" class="messages"> 
-<div class="muted">جاري تحميل الرسائل...</div> 
-</div> 
- 
-<div class="composer"> 
- 
-<input id="privateInput" 
-class="input" 
-placeholder="اكتب رسالتك..." 
-onkeydown="if(event.key==='Enter')sendPrivate()"> 
- 
-<button class="btn btn-primary" 
-onclick="sendPrivate()"> 
-إرسال 
-</button> 
- 
-</div> 
- 
-</div>`; 
- 
-const cid= 
-conversationId(currentUser.uid,currentPrivateUser); 
- 
-privateUnsub= 
-db.collection("privateMessages") 
-.doc(cid) 
-.collection("messages") 
-.orderBy("createdAt","asc") 
-.limitToLast(100) 
-.onSnapshot(snap=>{ 
- 
-const box=document.getElementById("privateMessages"); 
- 
-if(!box)return; 
- 
-box.innerHTML=snap.docs.map(d=>{ 
- 
-const m=d.data(); 
- 
-return` 
- 
-<div class="message ${m.uid===currentUser.uid?"mine":""}"> 
- 
-<div class="message-user"> 
-${escapeHTML(m.username||"عضو")} 
-</div> 
- 
-${escapeHTML(m.text||"")} 
- 
-</div>`; 
- 
-}).join(""); 
- 
-box.scrollTop=box.scrollHeight; 
- 
-},e=>console.error(e)); 
- 
-} 
- 
- 
-async function sendPrivate(){ 
- 
-const input=document.getElementById("privateInput"); 
-const text=input.value.trim(); 
- 
-if(!text||!currentPrivateUser)return; 
- 
-const cid= 
-conversationId(currentUser.uid,currentPrivateUser); 
- 
-try{ 
- 
-await db.collection("privateMessages") 
-.doc(cid) 
-.collection("messages") 
-.add({ 
- 
-uid:currentUser.uid, 
-username:profile.username, 
-text, 
-createdAt:firebase.firestore.FieldValue.serverTimestamp() 
- 
-}); 
- 
-input.value=""; 
- 
-}catch(e){ 
- 
-console.error(e); 
-toast("تعذر إرسال الرسالة"); 
- 
-} 
- 
-} 
- 
- 
+async function privateChat(){if(!currentPrivateUser){document.getElementById("page").innerHTML=`<div class="card"><h2>✉️ الشات الخاص</h2><p class="page-desc">اذهب إلى قسم العائلة واختر أحد الأعضاء.</p><button class="btn btn-primary" onclick="go('family')">👨‍👩‍👧‍👦 فتح العائلة</button></div>`;return;}let otherName="عضو",otherProfile={};try{const other=await db.collection("users").doc(currentPrivateUser).get();if(other.exists){otherProfile=other.data();otherName=otherProfile.name||otherProfile.username||"عضو";}}catch(e){}const cid=conversationId(currentUser.uid,currentPrivateUser);markConversationNotificationsRead(cid);document.getElementById("page").innerHTML=`<h1 class="page-title"><span style="display:inline-flex;align-items:center;gap:10px"><span class="chat-avatar avatar frame-${escapeHTML(otherProfile.frame||"normal")}">${otherProfile.profileImage?`<img src="${escapeHTML(otherProfile.profileImage)}">`:escapeHTML(otherProfile.avatar||"😀")}</span>${escapeHTML(otherName)}</span></h1><p class="page-desc">@${escapeHTML(otherProfile.username||"")} · محادثة خاصة</p><div class="card chat-card"><div id="privateMessages" class="messages"><div class="muted">جاري تحميل الرسائل...</div></div>${chatComposerHTML("private","sendPrivate")}</div>`;privateUnsub=db.collection("privateMessages").doc(cid).collection("messages").orderBy("createdAt","asc").limitToLast(100).onSnapshot(snap=>{const box=document.getElementById("privateMessages");if(!box)return;box.innerHTML=snap.docs.map(d=>chatMessageHTML(d.data())).join("");box.scrollTop=box.scrollHeight;},e=>console.error(e));}
+async function sendPrivate(text=null,media=null){if(!currentPrivateUser)return;const input=document.getElementById("privateInput");text=text===null?(input?.value.trim()||""):text;if(!text&&!media)return;const cid=conversationId(currentUser.uid,currentPrivateUser);try{await db.collection("privateMessages").doc(cid).collection("messages").add({uid:currentUser.uid,username:profile.username,name:profile.name||profile.username,profileImage:profile.profileImage||"",avatar:profile.avatar||"😀",frame:profile.frame||"normal",text,type:media?.type||"text",mediaUrl:media?.url||"",createdAt:firebase.firestore.FieldValue.serverTimestamp()});await db.collection("notifications").doc().set({recipientUid:currentPrivateUser,senderUid:currentUser.uid,senderName:profile.name||profile.username,senderUsername:profile.username,senderProfileImage:profile.profileImage||"",senderAvatar:profile.avatar||"😀",senderFrame:profile.frame||"normal",type:"private_message",conversationId:cid,text:text||(media?.type==="image"?"🖼️ أرسل صورة":"🎵 أرسل مقطعًا صوتيًا"),read:false,createdAt:firebase.firestore.FieldValue.serverTimestamp()});if(input)input.value="";}catch(e){console.error(e);toast("تعذر إرسال الرسالة");}}
+
+
+/* =========================================================
+STORIES + PUBLIC PROFILE + PROFILE MUSIC
+========================================================= */
+function storiesPage(){
+document.getElementById("page").innerHTML=`
+<h1 class="page-title">📖 القصص</h1>
+<p class="page-desc">انشر قصة نصية أو صورة أو فيديو.</p>
+<div class="card" style="margin-bottom:15px">
+<h2>➕ إضافة قصة</h2>
+<textarea id="storyText" class="input" rows="3" placeholder="اكتب قصة نصية..."></textarea>
+<div class="actions" style="margin-top:10px;flex-wrap:wrap">
+<label class="file-btn">🖼️ صورة<input id="storyImage" type="file" accept="image/*" onchange="uploadStoryFile('image')" style="display:none"></label>
+<label class="file-btn">🎬 فيديو<input id="storyVideo" type="file" accept="video/*" onchange="uploadStoryFile('video')" style="display:none"></label>
+<button class="btn btn-primary" onclick="postTextStory()">نشر النص</button>
+</div>
+<div id="storyStatus" class="muted" style="margin-top:8px"></div>
+</div>
+<div id="storiesList"><div class="muted">جاري تحميل القصص...</div></div>`;
+
+if(storiesUnsub)storiesUnsub();
+storiesUnsub=db.collection("stories").orderBy("createdAt","desc").limit(100).onSnapshot(snap=>{
+const box=document.getElementById("storiesList");if(!box)return;
+box.innerHTML=snap.docs.map(d=>storyCardHTML(d.data())).join("")||'<div class="card muted">لا توجد قصص.</div>';
+},e=>{console.error("STORIES ERROR:",e);const box=document.getElementById("storiesList");if(box)box.innerHTML='<div class="card muted">تعذر تحميل القصص.</div>';});
+}
+
+function storyCardHTML(s){
+const frame=escapeHTML(s.frame||"normal");
+const avatar=s.profileImage?`<img src="${escapeHTML(s.profileImage)}" alt="">`:escapeHTML(s.avatar||"😀");
+let body="";
+if(s.type==="image"&&s.mediaUrl)body=`<img src="${escapeHTML(s.mediaUrl)}" style="display:block;width:100%;max-height:600px;object-fit:contain;border-radius:16px">`;
+else if(s.type==="video"&&s.mediaUrl)body=`<video src="${escapeHTML(s.mediaUrl)}" controls playsinline preload="metadata" style="display:block;width:100%;max-height:600px;border-radius:16px"></video>`;
+else body=`<div style="font-size:18px;line-height:1.9;white-space:pre-wrap">${escapeHTML(s.text||"")}</div>`;
+return `<div class="card" style="margin-bottom:14px"><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><div class="chat-avatar avatar frame-${frame}">${avatar}</div><div><b>${escapeHTML(s.name||s.username||"عضو")}</b><div class="message-user">@${escapeHTML(s.username||"عضو")}</div></div></div>${body}${s.caption?`<div style="margin-top:10px">${escapeHTML(s.caption)}</div>`:""}</div>`;
+}
+
+async function postTextStory(){
+const input=document.getElementById("storyText"),value=input?.value.trim();
+if(!value)return toast("اكتب القصة أولًا");
+try{
+await db.collection("stories").add({uid:currentUser.uid,username:profile.username,name:profile.name||profile.username,profileImage:profile.profileImage||"",avatar:profile.avatar||"😀",frame:profile.frame||"normal",type:"text",text:value,mediaUrl:"",caption:"",createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+input.value="";toast("📖 تم نشر القصة");
+}catch(e){console.error(e);toast("تعذر نشر القصة");}
+}
+
+async function uploadStoryFile(type){
+const input=document.getElementById(type==="image"?"storyImage":"storyVideo"),file=input?.files?.[0];if(!file)return;
+const max=type==="image"?10*1024*1024:50*1024*1024;
+if(file.size>max)return toast(type==="image"?"الصورة يجب ألا تتجاوز 10MB":"الفيديو يجب ألا يتجاوز 50MB");
+try{
+const st=document.getElementById("storyStatus");if(st)st.textContent="جارٍ رفع القصة...";
+const safe=file.name.replace(/[^a-zA-Z0-9._-]/g,"_");
+const ref=storage.ref().child(`stories/${currentUser.uid}/${Date.now()}_${safe}`);
+await ref.put(file,{contentType:file.type});
+const url=await ref.getDownloadURL();
+await db.collection("stories").add({uid:currentUser.uid,username:profile.username,name:profile.name||profile.username,profileImage:profile.profileImage||"",avatar:profile.avatar||"😀",frame:profile.frame||"normal",type,mediaUrl:url,text:"",caption:document.getElementById("storyText")?.value.trim()||"",createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+if(document.getElementById("storyText"))document.getElementById("storyText").value="";
+input.value="";if(st)st.textContent="";toast(type==="image"?"🖼️ تم نشر الصورة":"🎬 تم نشر الفيديو");
+}catch(e){console.error(e);toast(e.message||"تعذر رفع القصة");}
+}
+
+function profileMusicHTML(p,editable=false){
+if(!p?.profileMusic && !editable)return "";
+const color=escapeHTML(p?.musicBoxColor||"default");
+const style=escapeHTML(p?.musicBoxStyle||"rounded");
+return `<div class="profile-music-box music-box-${color} music-style-${style}">
+<div class="music-box-head">
+<div class="music-box-icon">🎵</div>
+<div style="min-width:0;flex:1">
+<div class="music-box-title">موسيقى الملف الشخصي</div>
+<div class="music-box-name">${escapeHTML(p?.profileMusicName||"أضف أغنية من جهازك")}</div>
+</div>
+</div>
+${p?.profileMusic?`<audio controls preload="metadata" src="${escapeHTML(p.profileMusic)}"></audio>`:`<div class="music-empty">🎧 لم تتم إضافة أغنية بعد</div>`}
+${editable?`<div class="music-box-settings">
+<div class="music-setting-grid">
+<label>لون المربع<select id="musicBoxColor" class="input">
+<option value="default" ${color==="default"?"selected":""}>افتراضي</option>
+<option value="purple" ${color==="purple"?"selected":""}>بنفسجي</option>
+<option value="blue" ${color==="blue"?"selected":""}>أزرق</option>
+<option value="green" ${color==="green"?"selected":""}>أخضر</option>
+<option value="gold" ${color==="gold"?"selected":""}>ذهبي</option>
+</select></label>
+<label>شكل المربع<select id="musicBoxStyle" class="input">
+<option value="rounded" ${style==="rounded"?"selected":""}>مستدير</option>
+<option value="square" ${style==="square"?"selected":""}>مربع</option>
+<option value="glass" ${style==="glass"?"selected":""}>زجاجي</option>
+</select></label>
+</div>
+<label>🎵 اختر أغنية من جهازك<input id="profileMusicFile" class="input" type="file" accept="audio/*"></label>
+<div class="actions">
+<button class="btn btn-primary" onclick="saveProfileMusicBox()">💾 إضافة / حفظ الأغنية</button>
+${p?.profileMusic?`<button class="btn" onclick="removeProfileMusic()">🗑️ حذف الأغنية</button>`:""}
+</div>
+<div id="profileMusicStatus" class="muted"></div>
+</div>`:""}
+</div>`;
+}
+
+async function removeProfileMusic(){
+try{
+await saveProfile({profileMusic:"",profileMusicName:""});
+profile.profileMusic="";
+profile.profileMusicName="";
+toast("🗑️ تم حذف الأغنية");
+profilePage();
+}catch(e){
+console.error(e);
+toast("تعذر حذف الأغنية");
+}
+}
+
+async function saveProfileMusicBox(){
+const file=document.getElementById("profileMusicFile")?.files?.[0];
+const color=document.getElementById("musicBoxColor")?.value||profile.musicBoxColor||"default";
+const style=document.getElementById("musicBoxStyle")?.value||profile.musicBoxStyle||"rounded";
+const status=document.getElementById("profileMusicStatus");
+try{
+if(status)status.textContent="جارٍ الحفظ...";
+const update={musicBoxColor:color,musicBoxStyle:style};
+if(file){
+if(!file.type.startsWith("audio/"))throw new Error("اختر ملفًا صوتيًا فقط");
+if(file.size>20*1024*1024)throw new Error("الأغنية يجب ألا تتجاوز 20MB");
+const safe=file.name.replace(/[^a-zA-Z0-9._-]/g,"_");
+const ref=storage.ref().child(`profileMusic/${currentUser.uid}/${Date.now()}_${safe}`);
+await ref.put(file,{contentType:file.type});
+update.profileMusic=await ref.getDownloadURL();
+update.profileMusicName=file.name;
+}
+await saveProfile(update);
+Object.assign(profile,update);
+if(status)status.textContent="تم الحفظ ✓";
+toast("🎵 تم حفظ مربع الموسيقى");
+profilePage();
+}catch(e){
+console.error(e);
+if(status)status.textContent=e.message||"تعذر الحفظ";
+toast(e.message||"تعذر حفظ الموسيقى");
+}
+}
+
+function canMessageUser(uid){
+if(!uid)return false;
+if(uid===currentUser.uid){
+toast("❌ لا يمكنك مراسلة نفسك");
+return false;
+}
+return true;
+}
+
+async function viewUserProfile(uid){
+try{
+const snap=await db.collection("users").doc(uid).get();if(!snap.exists)return toast("الحساب غير موجود");
+const p={...safeProfile(),...snap.data(),id:uid};
+document.getElementById("page").innerHTML=`
+<div class="card">
+<div style="display:flex;align-items:center;gap:15px;flex-wrap:wrap">${avatarHTML(p)}
+<div><div class="profile-name">${escapeHTML(p.name||p.username||"عضو")}</div><div class="profile-username">@${escapeHTML(p.username||"")}</div><div class="badge">${escapeHTML(p.title||"عضو العائلة")}<br><span class="online"></span>${escapeHTML(p.status||"متاح")}</div></div></div>
+<p style="margin-top:15px;line-height:1.8">${escapeHTML(p.bio||"")}</p>
+<div class="actions"><button class="btn btn-primary" onclick="openPrivate('${uid}')">✉️ مراسلة</button><button class="btn" onclick="go('family')">↩️ رجوع</button></div>
+</div>
+${profileMusicHTML(p)}`;
+}catch(e){console.error(e);toast("تعذر فتح الملف الشخصي");}
+}
+
 /* ========================================================= 
 STORE - 100 ITEMS 
 ========================================================= */ 
@@ -2179,7 +2187,7 @@ return`
 <h3>${escapeHTML(i.name)}</h3> 
  
 <div class="store-price ${i.currency==="gold"?"gold":"ruby"}"> 
-${i.price} ${i.currency==="gold"?"🪙":"💎"} 
+${i.price} ${i.currency==="gold"?"💰":"💎"} 
 </div> 
  
 ${owned 
@@ -2335,19 +2343,19 @@ ${profile.ruby||0}
 <h2>🔄 تحويل العملات</h2> 
  
 <p class="page-desc"> 
-100 🪙 ذهب = 1 💎 ياقوت 
+100 💰 ذهب = 1 💎 ياقوت 
 </p> 
  
 <div class="actions"> 
  
 <button class="btn btn-gold" 
 onclick="convertGoldToRuby()"> 
-100 🪙 ← 1 💎 
+100 💰 ← 1 💎 
 </button> 
  
 <button class="btn btn-ruby" 
 onclick="convertRubyToGold()"> 
-1 💎 → 100 🪙 
+1 💎 → 100 💰 
 </button> 
  
 </div> 
@@ -2369,7 +2377,7 @@ placeholder="اسم المستخدم المستلم">
 <select id="transferCurrency" 
 class="input"> 
  
-<option value="gold">🪙 ذهب</option> 
+<option value="gold">💰 ذهب</option> 
 <option value="ruby">💎 ياقوت</option> 
  
 </select> 
@@ -2435,7 +2443,7 @@ gold:firebase.firestore.FieldValue.increment(100)
  
 }); 
  
-toast("تم تحويل الياقوت إلى ذهب 🪙"); 
+toast("تم تحويل الياقوت إلى ذهب 💰"); 
  
 }catch(e){ 
  
@@ -2535,7 +2543,7 @@ document.getElementById("page").innerHTML=`
 <div> 
 <h2>⭕ XO ❌</h2> 
 <p class="muted"> 
-الفائز يحصل على <b class="gold">1000 🪙</b> 
+الفائز يحصل على <b class="gold">1000 💰</b> 
 </p> 
 </div> 
  
@@ -3931,7 +3939,8 @@ ${escapeHTML(profile.status||"متاح")}
  
 <p style="margin-top:15px;line-height:1.8"> 
 ${escapeHTML(profile.bio||"")} 
-</p> 
+</p>
+${profileMusicHTML(profile,true)} 
  
 <div class="actions" style="justify-content:center"> 
  
@@ -4210,6 +4219,17 @@ profileImage:image
  
 }); 
  
+
+const musicFile=document.getElementById("profileMusicFile")?.files?.[0];
+if(musicFile){
+if(!musicFile.type.startsWith("audio/"))throw new Error("اختر ملفًا صوتيًا صحيحًا");
+if(musicFile.size>20*1024*1024)throw new Error("الأغنية يجب ألا تتجاوز 20MB");
+const safeMusic=musicFile.name.replace(/[^a-zA-Z0-9._-]/g,"_");
+const musicRef=storage.ref().child(`profileMusic/${currentUser.uid}/${Date.now()}_${safeMusic}`);
+await musicRef.put(musicFile,{contentType:musicFile.type});
+const musicUrl=await musicRef.getDownloadURL();
+await saveProfile({profileMusic:musicUrl,profileMusicName:musicFile.name});
+}
 closeModal(); 
  
 toast("تم تحديث البروفايل ✨"); 
@@ -4375,6 +4395,8 @@ auth.onAuthStateChanged(async user=>{
  
 currentUser=user; 
  
+if(notificationUnsub){notificationUnsub();notificationUnsub=null;}
+ 
 if(profileUnsub){ 
  
 profileUnsub(); 
@@ -4437,6 +4459,7 @@ document.getElementById("app")
 .classList.remove("hidden"); 
  
 subscribeProfile(); 
+startNotifications();
  
 go("home"); 
  
@@ -4504,4 +4527,5 @@ renderNav();
 </script> 
  
 </body> 
-</html>     
+</html> 
+ 
